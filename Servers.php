@@ -121,6 +121,12 @@ if(isset($_GET['id'])){
 	//print_r($packs);
 
 	print '<table border="1">';
+	print '<th>ID</th>';
+	print '<th>Package</th>';
+	print '<th>Version</th>';
+	print '<th>Upgradeable</th>';
+	print '<th>Security</th>';
+		
 	//while($row1=mysqli_fetch_array($resultp)) {
 	while($row1 = $resultp->fetch_assoc()) {
 		//print_r($resultp); 
