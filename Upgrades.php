@@ -23,14 +23,18 @@ if (!$conn) {
 
 if(isset($_GET['Check'])){
 	print_r($servername);
-	$sql = "SELECT package FROM packages where upgrade = 1 AND servers = $id";
-	print '<table border="1">';
-	print '<th><td>Package</td></th>';
+	$sql = "SELECT package, id FROM packages where upgrade = 1 AND servers = $id";
+	print '<table border="1">'.PHP_EOL;
+	print '<td><input type="checkbox" name="packages[]" value="all" class="packages" /></td>';
+	print '<td>Package</td>';
+	print '</th>'.PHP_EOL;
+	
 	$results = $conn->query($sql);
 	while($row = $results->fetch_array()) {
 		print '<tr>';
+		print '<td><input type="checkbox" name="packages[]" value="'.$row['id'].'" class="packages" /></td>';
 		print '<td>'.$row["package"].'</td>';
-		print '</tr>';
+		print '</tr>'.PHP_EOL;
 	
 	}
 	//exec("ssh root@$ip apt-get -y upgrade 2>&1", $return );
@@ -42,14 +46,17 @@ if(isset($_GET['Sec'])){
 //	print '<table border="1">';
 //	print '<tr>';
 //	print '<th>'echo 'Package''</th>';
-	print '<table border="1">';
-	print '<th><td>Package</td></th>';
+	print '<table border="1">'.PHP_EOL;
+	print '<td><input type="checkbox" name="packages[]" value="all" class="packages" /></td>';
+	print '<td>Package</td>';
+	print '</th>'.PHP_EOL;
 	
 	$results = $conn->query($sql);
 while($row = $results->fetch_array()) {
     print '<tr>';
-    print '<td>'.$row["package"].'</td>';
-    print '</tr>';
+	print '<td><input type="checkbox" name="packages[]" value="'.$row['id'].'" class="packages" /></td>';
+	print '<td>'.$row["package"].'</td>';
+	print '</tr>'.PHP_EOL;
 
 }  
 print '</table>';
