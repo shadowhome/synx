@@ -10,13 +10,13 @@
 <script>
 $(document).ready(function() {
     $('#packages').click(function(event) {  //on click
-        if(this.checked) { // check select status
+        if(this.prop) { // check select status
             $('.packages').each(function() { //loop through each checkbox
-                this.checked = true;  //select all checkboxes with class "checkbox"              
+                this.prop = true;  //select all checkboxes with class "checkbox"              
             });
         }else{
             $('.packages').each(function() { //loop through each checkbox
-                this.checked = false; //deselect all checkboxes with class "checkbox"                      
+                this.prop = false; //deselect all checkboxes with class "checkbox"                      
             });        
         }
     });
