@@ -1,5 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Upgrades to Server</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+</head> 
+<body>
+<h1>Server Upgrade</h1>
+<br>
+<script>
+$(document).ready(function() {
+    $('#packages').click(function(event) {  //on click
+        if(this.checked) { // check select status
+            $('.packages').each(function() { //loop through each checkbox
+                this.checked = true;  //select all checkboxes with class "checkbox"              
+            });
+        }else{
+            $('.packages').each(function() { //loop through each checkbox
+                this.checked = false; //deselect all checkboxes with class "checkbox"                      
+            });        
+        }
+    });
+   
+});
+</script>
 <?php
 include 'inc/upconfig.php';
+
 $servername = $_GET['servername'];
 $ip = $_GET['ip'];
 $id = $_GET['id'];
@@ -25,9 +51,10 @@ if(isset($_GET['Check'])){
 	print_r($servername);
 	$sql = "SELECT package, id FROM packages where upgrade = 1 AND servers = $id";
 	print '<table border="1">'.PHP_EOL;
+	print '<tr>';
 	print '<td><input type="checkbox" name="packages[]" value="all" class="packages" /></td>';
-	print '<td>Package</td>';
-	print '</th>'.PHP_EOL;
+	print '<td>Package</td>'.PHP_EOL;
+	print '</tr>'.PHP_EOL;
 	
 	$results = $conn->query($sql);
 	while($row = $results->fetch_array()) {
@@ -43,13 +70,11 @@ if(isset($_GET['Check'])){
 if(isset($_GET['Sec'])){
 	print_r($servername);
 	$sql = "SELECT package, id FROM packages where security = 1 AND servers = $id";
-//	print '<table border="1">';
-//	print '<tr>';
-//	print '<th>'echo 'Package''</th>';
 	print '<table border="1">'.PHP_EOL;
-	print '<td><input type="checkbox" name="packages[]" value="all" class="packages" /></td>';
-	print '<td>Package</td>';
-	print '</th>'.PHP_EOL;
+	print '<tr>';
+	print '<td><input type="checkbox" name="packages[]" value="all" class="all" /></td>';
+	print '<td>Package</td>'.PHP_EOL;
+	print '</tr>'.PHP_EOL;
 	
 	$results = $conn->query($sql);
 while($row = $results->fetch_array()) {
@@ -67,6 +92,7 @@ print '</table>';
 mysqli_close($conn);
 
 ?>
+
 
 What would you like to upgrade?
 <br>
@@ -88,8 +114,8 @@ What would you like to upgrade?
 
 
 
-
-
+</body>
+</html>
 
 
 
