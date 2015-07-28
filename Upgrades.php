@@ -8,19 +8,18 @@
 <h1>Server Upgrade</h1>
 <br>
 <script>
-$(document).ready(function() {
-    $('#cb-package-all').click(function(event) {  //on click
-        if(this.prop('checked')) { // check select status
-            $('.packages').each(function() { //loop through each checkbox
-                this.prop('checked', true);  //select all checkboxes with class "checkbox"              
+jQuery(document).ready(function() {
+    jQuery('#cb-package-all').click(function(event) {  //on click
+        if(jQuery(this).prop('checked')) { // check select status
+            jQuery('.packages').each(function() { //loop through each checkbox
+                jQuery(this).prop('checked', true);  //select all checkboxes with class "checkbox"              
             });
-        }else{
-            $('.packages').each(function() { //loop through each checkbox
-                this.prop('checked', false); //deselect all checkboxes with class "checkbox"                      
+        } else {
+            jQuery('.packages').each(function() { //loop through each checkbox
+                jQuery(this).prop('checked', false); //deselect all checkboxes with class "checkbox"                      
             });        
         }
     });
-   
 });
 </script>
 <?php
