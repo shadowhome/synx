@@ -9,14 +9,14 @@
 <br>
 <script>
 $(document).ready(function() {
-    $('#packages').click(function(event) {  //on click
-        if(this.prop) { // check select status
+    $('#cb-package-all').click(function(event) {  //on click
+        if(this.prop('checked')) { // check select status
             $('.packages').each(function() { //loop through each checkbox
-                this.prop = true;  //select all checkboxes with class "checkbox"              
+                this.prop('checked', true);  //select all checkboxes with class "checkbox"              
             });
         }else{
             $('.packages').each(function() { //loop through each checkbox
-                this.prop = false; //deselect all checkboxes with class "checkbox"                      
+                this.prop('checked', false); //deselect all checkboxes with class "checkbox"                      
             });        
         }
     });
@@ -47,12 +47,14 @@ if (!$conn) {
 	die("Connection failed: " . mysqli_connect_error());
 }
 
+echo "<form action='Upgrades.php' method='get'>";
+
 if(isset($_GET['Check'])){
 	print_r($servername);
 	$sql = "SELECT package, id FROM packages where upgrade = 1 AND servers = $id";
 	print '<table border="1">'.PHP_EOL;
 	print '<tr>';
-	print '<td><input type="checkbox" name="packages[]" value="all" class="packages" /></td>';
+	print '<td><input id="cb-package-all" type="checkbox" name="packages[]" value="all" /></td>';
 	print '<td>Package</td>'.PHP_EOL;
 	print '</tr>'.PHP_EOL;
 	
@@ -93,12 +95,10 @@ mysqli_close($conn);
 
 ?>
 
-
 What would you like to upgrade?
 <br>
 <p>
-
-	<form action="Upgrades.php" method='get'>
+	
 	<input type="hidden" name=id value="<?php echo $id?>">
 	<input type="hidden" name=ip value="<?php echo $ip?>">
 	<input type="hidden" name=servername value="<?php echo $servername?>">
