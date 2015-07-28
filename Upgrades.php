@@ -74,7 +74,7 @@ if(isset($_GET['Sec'])){
 	$sql = "SELECT package, id FROM packages where security = 1 AND servers = $id";
 	print '<table border="1">'.PHP_EOL;
 	print '<tr>';
-	print '<td><input type="checkbox" name="packages[]" value="all" class="all" /></td>';
+	print '<td><input id="cb-package-all" type="checkbox" name="packages[]" value="all" class="all" /></td>';
 	print '<td>Package</td>'.PHP_EOL;
 	print '</tr>'.PHP_EOL;
 	
@@ -98,7 +98,7 @@ mysqli_close($conn);
 What would you like to upgrade?
 <br>
 <p>
-	
+		
 	<input type="hidden" name=id value="<?php echo $id?>">
 	<input type="hidden" name=ip value="<?php echo $ip?>">
 	<input type="hidden" name=servername value="<?php echo $servername?>">
