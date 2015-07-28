@@ -23,7 +23,7 @@
     <script>
     jQuery(document).ready(function() {
         jQuery('.select-all').click(function(event) {  //on click
-            var strPackage = jQuery(this).prop('data-package');
+            var strPackage = jQuery(this).data('package');
             if(jQuery(this).prop('checked')) { // check select status
                 jQuery('.' + strPackage).each(function() { //loop through each checkbox
                     jQuery(this).prop('checked', true);  //select all checkboxes with class "checkbox"
