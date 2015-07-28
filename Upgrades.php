@@ -42,7 +42,7 @@
 
 <?php
 echo 'IP:';
-print_r($ip)
+print_r($ip);
 
 echo '<br/> <br/>';
 
