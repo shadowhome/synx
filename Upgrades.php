@@ -25,11 +25,11 @@
         jQuery('.select-all').click(function(event) {  //on click
             var strPackage = jQuery(this).prop('data-package');
             if(jQuery(this).prop('checked')) { // check select status
-                jQuery('.' + strPackage').each(function() { //loop through each checkbox
+                jQuery('.' + strPackage).each(function() { //loop through each checkbox
                     jQuery(this).prop('checked', true);  //select all checkboxes with class "checkbox"
                 });
             } else {
-                jQuery('.' + strPackage').each(function() { //loop through each checkbox
+                jQuery('.' + strPackage).each(function() { //loop through each checkbox
                     jQuery(this).prop('checked', false); //deselect all checkboxes with class "checkbox"                      
                 });
             }
@@ -62,7 +62,7 @@ if(isset($_GET['Check'])){
 
     print '<table border="1">'.PHP_EOL;
     print '<tr>';
-    print '<td><input type="checkbox" data-packages="check-packages" class="select-all" /></td>';
+    print '<td><input type="checkbox" data-package="check-packages" class="select-all" /></td>';
     print '<td>Package</td>'.PHP_EOL;
     print '</tr>'.PHP_EOL;
 
@@ -87,7 +87,7 @@ if(isset($_GET['Sec'])){
 
     print '<table border="1">'.PHP_EOL;
     print '<tr>';
-    print '<td><input type="checkbox" data-packages="sec-packages" class="select-all" /></td>';
+    print '<td><input type="checkbox" data-package="sec-packages" class="select-all" /></td>';
     print '<td>Package</td>'.PHP_EOL;
     print '</tr>'.PHP_EOL;
 	
