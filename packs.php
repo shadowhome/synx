@@ -46,7 +46,7 @@ $aptup=array();
 	//$sec = exec("ssh root@$ip apt-get upgrade -s|grep Debian-Security|grep ^Inst",$response1);
 	$aptspack = array();
 	$sec = exec("ssh root@$ip '/home/sysadmin/bin/packs.sh security ; cat /home/sysad/manage/spacks.txt'",$aptspack);
-	print_r("ssh root@$ip '/home/sysadmin/bin/packs.sh security ; cat /home/sysad/manage/spacks.txt'");
+	//print_r("ssh root@$ip '/home/sysadmin/bin/packs.sh security ; cat /home/sysad/manage/spacks.txt'");
 
 	$secupdat = array();
 	$response1 = array();
@@ -65,7 +65,13 @@ $aptup=array();
 	}
 }
 
+exec("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog;cat /home/sysad/work/*.changelog'", $changelogs);
+print_r("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog \"".implode(' ',$packages)."\";cat /home/sysad/manage/changelog.*'");
+print_r($changelogs);
+
 $sql2="UPDATE packages SET security = 1, upgrade = 1 where servers = $id AND package IN ("._dbList($secupdat).")";
+
+
 if (mysqli_query($conn, $sql)&&!empty($secupdat)&&mysqli_query($conn, $sql2)) {
 	echo "New record created successfully";
 } else {
@@ -74,7 +80,6 @@ if (mysqli_query($conn, $sql)&&!empty($secupdat)&&mysqli_query($conn, $sql2)) {
 
 	//print_r("ssh root@$ip 'cd /var/cache/apt/archives/ ;apt-get download '".implode(" ",$packages));
 	//$run = exec("ssh root@$ip 'cd /var/cache/apt/archives/ ;apt-get download '".implode(" ",$packages), $cmd);
-	exec("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog'");
 	//print_r($packages);
 	//print_r($cmd);
 	//print_r($run);
