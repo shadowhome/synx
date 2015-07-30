@@ -65,8 +65,11 @@ $aptup=array();
 	}
 }
 
-exec("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog;cat /home/sysad/work/*.changelog'", $changelogs);
-print_r("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog \"".implode(' ',$packages)."\";cat /home/sysad/manage/changelog.*'");
+$changelogs = array();
+exec("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog \"".implode(' ',$packages)."\"'");
+exec("ssh root@$ip 'cat /home/sysad/manage/changelog.*'", $changelogs);
+
+//print_r("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog \"".implode(' ',$packages)."\";cat /home/sysad/manage/changelog.*'");
 print_r($changelogs);
 
 $sql2="UPDATE packages SET security = 1, upgrade = 1 where servers = $id AND package IN ("._dbList($secupdat).")";

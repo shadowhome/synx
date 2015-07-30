@@ -2,6 +2,11 @@
 
 workdir=/home/sysad/manage/
 
+#Need this to get changelogs
+if [ ! -x /usr/bin/apt-listchanges ];then
+        apt-get -y install apt-listchanges
+fi
+
 #Cleanup as it will all get regenerated.
 rm -f $workdir/*
 
@@ -20,7 +25,7 @@ if [ $1 == "changelog" ];then
         cd /var/cache/apt/archives/;
         apt-get autoclean;
         apt-get download $2;
-        for a in $2
+	for a in /var/cache/apt/archives/*.deb
                 do apt-listchanges $a*.deb |grep -v "Reading changelogs" > $workdir/changelog.$a
         done
 fi
