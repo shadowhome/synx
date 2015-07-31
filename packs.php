@@ -1,13 +1,10 @@
 <?php
 include 'inc/upconfig.php';
+include 'inc/functions.php';
 ini_set('post_max_size','20M');
 ini_set('upload_max_filesize','2M');
 ini_set('max_execution_time', '3600');
 
-function _dbList($stringArray){
-	array_walk($stringArray, function(&$field){$field = '"'.$field.'"';});
-	return implode(', ',$stringArray);
-}
 
 // Create connection
 $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
@@ -65,18 +62,58 @@ $aptup=array();
 	}
 }
 
+$changelog_long = array();
 $changelogs = array();
-exec("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog \"".implode(' ',$packages)."\"'");
-exec("ssh root@$ip 'cat /home/sysad/manage/changelog.*'", $changelogs);
+exec("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog \"".implode(' ',$packages)."\"'", $changelog_long);
+//print_r("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog \"".implode(' ',$packages)."\"'");
+//exec("ssh root@$ip 'cat /home/sysad/manage/changelog.*'", $changelogs);
 
 //print_r("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog \"".implode(' ',$packages)."\";cat /home/sysad/manage/changelog.*'");
-print_r($changelogs);
+//print_r($changelogs);
+//$content = $changelogs;
+$start = "START";
+$end = "ENDED";
+
+$current_log = array();
+for($i=0;$i<sizeof($changelog_long);$i++){
+	if($changelog_long[$i] === $start){
+		$current_log = array();
+	}
+	elseif($changelog_long[$i] === $end){
+		$changelogs[] = $current_log;	
+	}else{
+		$current_log[] = $changelog_long[$i];
+	}
+}
+
+$changed_packages = array();
+$changelog_sql = array();
+foreach ($changelogs as $content) {
+	if($content && isset($content[0])){
+		$p = substr($content[0], 0, strpos($content[0], ' '));
+		if(isset($changed_packages[$p])){
+			continue;
+		}
+		
+		$changed_packages[$p] = implode(PHP_EOL,$content);
+
+		$changelog_sql[]="UPDATE packages SET changelog = '".mysqli_escape_string($conn, $changed_packages[$p])."' where servers = $id AND package = '$p'";
+		
+	}
+}
+
+
 
 $sql2="UPDATE packages SET security = 1, upgrade = 1 where servers = $id AND package IN ("._dbList($secupdat).")";
 
 
 if (mysqli_query($conn, $sql)&&!empty($secupdat)&&mysqli_query($conn, $sql2)) {
+	foreach($changelog_sql as $sql_cl){
+		//echo $sql_cl;echo '<br/><br/>';
+		mysqli_query($conn, $sql_cl);
+	}
 	echo "New record created successfully";
+	header( "Location: Servers.php" );
 } else {
 	echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 }
