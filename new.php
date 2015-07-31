@@ -46,6 +46,7 @@ if (mysqli_query($link, $sql)) {
 
 if ($_POST['populate'] == 'yes') {
 	exec("ssh root@$ip 'dpkg-query --show'",$packages);
+	exec("ssh root@$ip 'if [ ! -d /home/sysad/manage/packs.sh ];then mkdir /home/sysad/manage/packs.sh' ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh ");
 	$response = array();
 	//print_r($packages);
 	$out=array();
