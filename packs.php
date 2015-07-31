@@ -97,7 +97,7 @@ foreach ($changelogs as $content) {
 		
 		$changed_packages[$p] = implode(PHP_EOL,$content);
 
-		$changelog_sql[]="UPDATE packages SET changelog = '".mysqli_escape_string($conn, $changed_packages[$p])."' where servers = $id AND package = '$p'";
+		$changelog_sql[]="UPDATE packages SET changelog = '".mysqli_escape_string($conn, $changed_packages[$p])."' where servers = $id AND (package = '$p' OR package like CONCAT('$p','-%') OR package like CONCAT('$p','_%'))";
 		
 	}
 }

@@ -53,7 +53,7 @@ if(isset($_GET['id'])){
 	$sql="SELECT  id, servername, ip, company, version, OS, description, releasever FROM servers WHERE id = '$id'";
 	$result=mysqli_query($conn, $sql);
 	$row=mysqli_fetch_array($result);
-	$packs="SELECT package, OS, version, upgrade, security from packages where servers = '$id'".(($updatesOnly)?' AND upgrade="1"':'').(($secOnly)?' AND security="1"':'');
+	$packs="SELECT package, OS, version, upgrade, security, changelog from packages where servers = '$id'".(($updatesOnly)?' AND upgrade="1"':'').(($secOnly)?' AND security="1"':'');
 	
 	
 	$resultp=mysqli_query($conn, $packs);
@@ -62,6 +62,7 @@ if(isset($_GET['id'])){
 	$ip=$row['ip'];
 	$company=$row['company'];
 	$description=$row['description'];
+	
 	echo "SERVER DETAILS"."\n"."<br>";
 	echo "id: " . $row["id"]. 
 	" - Name: " . $row["servername"] .
@@ -126,6 +127,7 @@ if(isset($_GET['id'])){
 	print '<th>Version</th>';
 	print '<th>Upgradeable</th>';
 	print '<th>Security</th>';
+	print '<th>Changelog</th>';
 		
 	//while($row1=mysqli_fetch_array($resultp)) {
 	while($row1 = $resultp->fetch_assoc()) {
@@ -137,6 +139,7 @@ if(isset($_GET['id'])){
 		print '<td>'.$row1["version"].'</td>';
 		print '<td>'.$row1["upgrade"].'</td>';
 		print '<td>'.$row1["security"].'</td>';
+		print '<td>'.nl2br($row1["changelog"]).'</td>';
 		print '</tr>';
 		
 		//print_r($row1);
