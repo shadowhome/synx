@@ -42,6 +42,6 @@ fi
 if [ $1 == "md5" ];then
         cd /var/cache/apt/archives/;
         for a in `ls *.deb`
-                do dpkg-deb -I $a|grep Package ;md5sum $a;tr -d '\n'
+                do dpkg-deb -I $a|grep Package |awk '{print$2}'|tr -d '\n';echo ' '|tr -d '\n';md5sum $a
         done
 fi
