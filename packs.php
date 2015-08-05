@@ -15,6 +15,14 @@ if (!$conn) {
 
 $id=$_GET['id'];
 $ip=$_GET['ip'];
+$servername = $_GET['servername'];
+$company = $_GET['company'];
+
+list($OS, $version, $releasever) = getOS();
+//print_r($OS);
+//print_r($version);
+//print_r($releasever);
+$sqlnew = "UPDATE servers SET (OS,version,releasever) VALUES ('$OS','$version','$releasever') WHERE id = $id";
 
 $aptup=array();
 	//$aptch = exec("ssh root@$ip apt-get update");
@@ -38,7 +46,28 @@ $aptup=array();
 		}
 	}
 	
-	$sql="UPDATE packages SET upgrade = 1 where servers = $id AND package IN ("._dbList($packages).")";
+	$md5_check = array();
+	
+	exec("ssh root@$ip '/home/sysadmin/bin/packs.sh md5'", $md5_check);
+
+	$sql="REPLACE INTO packages (package, servers, upgrade, md5) VALUES";
+	$sep = '';
+	
+	foreach ($md5_check as $md_s) {
+		//print_r($md5_check);
+		list($packm, $md5val, $filename) = explode(" ", $md_s);
+		print_r($packm);
+		echo '<br/>';
+		print_r($md5val);
+		echo '<br/>';
+		echo '<br/>';
+	//}
+	
+
+//	foreach($packages as $package){
+		$sql .= $sep."(\"$packm\", $id, 1, \"$md5val\")";
+		$sep = ', ';
+	}
 	
 	//$sec = exec("ssh root@$ip apt-get upgrade -s|grep Debian-Security|grep ^Inst",$response1);
 	$aptspack = array();
@@ -62,6 +91,9 @@ $aptup=array();
 	}
 }
 
+//$hist = "INSERT INTO packagesHist (package, OS, version, security, upgrade, servers, servername, changelog) SELECT package, OS, version, security, upgrade, servers, servername, changelog FROM packages WHERE servers = $id";
+
+
 $changelog_long = array();
 $changelogs = array();
 exec("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog \"".implode(' ',$packages)."\"'", $changelog_long);
@@ -73,6 +105,8 @@ exec("ssh root@$ip '/home/sysadmin/bin/packs.sh changelog \"".implode(' ',$packa
 //$content = $changelogs;
 $start = "START";
 $end = "ENDED";
+
+
 
 $current_log = array();
 for($i=0;$i<sizeof($changelog_long);$i++){
@@ -97,14 +131,15 @@ foreach ($changelogs as $content) {
 		
 		$changed_packages[$p] = implode(PHP_EOL,$content);
 
+		//$changelog_sql[]="REPLACE INTO packages changelog = '".mysqli_escape_string($conn, $changed_packages[$p])."', md5 =  where servers = $id AND (package = '$p' OR package like CONCAT('$p','-%') OR package like CONCAT('$p','_%'))";
 		$changelog_sql[]="UPDATE packages SET changelog = '".mysqli_escape_string($conn, $changed_packages[$p])."' where servers = $id AND (package = '$p' OR package like CONCAT('$p','-%') OR package like CONCAT('$p','_%'))";
-		
 	}
 }
 
 
 
 $sql2="UPDATE packages SET security = 1, upgrade = 1 where servers = $id AND package IN ("._dbList($secupdat).")";
+//$sql2="REPLACE INTO packages security = 1, upgrade = 1 where servers = $id AND package IN ("._dbList($secupdat).")";
 
 
 if (mysqli_query($conn, $sql)&&!empty($secupdat)&&mysqli_query($conn, $sql2)) {
@@ -113,7 +148,7 @@ if (mysqli_query($conn, $sql)&&!empty($secupdat)&&mysqli_query($conn, $sql2)) {
 		mysqli_query($conn, $sql_cl);
 	}
 	echo "New record created successfully";
-	header( "Location: Servers.php" );
+	//header( "Location: Servers.php" );
 } else {
 	echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 }

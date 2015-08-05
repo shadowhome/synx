@@ -53,7 +53,7 @@ if(isset($_GET['id'])){
 	$sql="SELECT  id, servername, ip, company, version, OS, description, releasever FROM servers WHERE id = '$id'";
 	$result=mysqli_query($conn, $sql);
 	$row=mysqli_fetch_array($result);
-	$packs="SELECT package, OS, version, upgrade, security, changelog from packages where servers = '$id'".(($updatesOnly)?' AND upgrade="1"':'').(($secOnly)?' AND security="1"':'');
+	$packs="SELECT package, OS, version, upgrade, security, changelog from packages where servers = '$id'".(($id)?' AND upgrade="1"':'').(($secOnly)?' AND security="1"':'');
 	
 	
 	$resultp=mysqli_query($conn, $packs);
@@ -92,6 +92,8 @@ if(isset($_GET['id'])){
 	<form action="packs.php" method='get'>
 	<input type="hidden" name=id value="<?php echo $id?>">
 	<input type="hidden" name=ip value="<?php echo $ip?>">
+	<input type="hidden" name=servername value="<?php echo $servername?>">
+	<input type="hidden" name=company value="<?php echo $company?>">
 	<input type="submit" name="Check" value="Check for updates">
 	</form>
 	<form action="Servers.php" method='get'>

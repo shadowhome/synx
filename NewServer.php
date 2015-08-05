@@ -29,7 +29,8 @@ Description: <textarea name="description" rows="5" cols="40"><?php echo "descrip
 </p>
 </form>
 <p>
-Have you added the web servers ssh-key to the remote root account /root/.ssh/authorized_keys, if not please do so now!
+Have you added the web servers ssh-key to the remote root account /root/.ssh/authorized_keys, if not please do so now! Also please check you can ssh as root the your server without the security check, you will need to access the ip not the servername
+
 </p>
 </body>
 </html>

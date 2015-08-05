@@ -15,16 +15,19 @@ $ip = mysqli_real_escape_string($link, $_POST['ip']);
 $company = mysqli_real_escape_string($link, $_POST['company']);
 
 //$OS = mysqli_real_escape_string($link, $_POST['OS']);
-$lsbresult   = array();
-$lsbcmd    = exec("ssh root@$servername 'lsb_release -as'",$lsbresult );
-$response = array();
+//$lsbresult   = array();
+//$lsbcmd    = exec("ssh root@$ip 'lsb_release -as'",$lsbresult );
+//print_r(exec("ssh root@$ip 'lsb_release -as'",$lsbresult ));
+//$response = array();
 //print_r($lsbresult);
 
-if(!empty($lsbresult)) {
-	$OS        = $lsbresult[0];
-	$version  = $lsbresult[3];
-	$releasever = $lsbresult[2];
-}
+
+list($OS, $version, $releasever) = getOS();
+//if(!empty($lsbresult)) {
+//	$OS        = $lsbresult[0];
+//	$version  = $lsbresult[3];
+//	$releasever = $lsbresult[2];
+//}
 
 //$version = mysqli_real_escape_string($link, $_POST['version']);
 
@@ -47,7 +50,7 @@ if (mysqli_query($link, $sql)) {
 if ($_POST['populate'] == 'yes') {
 	exec("ssh root@$ip 'dpkg-query --show'",$packages);
 	//exec("ssh root@$ip "'if [ ! -d /home/sysad/manage/packs.sh ];then mkdir /home/sysad/manage/packs.sh;fi' ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh"");
-	exec("ssh root@$ip \"'if [ ! -d /home/sysad/manage/packs.sh ];then mkdir /home/sysad/manage/packs.sh;fi' ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh\"");
+	exec("ssh root@$ip \"'if [ ! -d /home/sysad/manage/packs.sh ];then mkdir /home/sysad/manage/packs.sh;fi' ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh \"");
 	$response = array();
 	//print_r($packages);
 	$out=array();
