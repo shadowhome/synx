@@ -6,6 +6,9 @@ workdir=/home/sysadmin/manage
 if [ ! -x /usr/bin/apt-listchanges ]; then
 	apt-get -y install apt-listchanges sqlite3
 fi
+if [ ! -x /usr/bin/sqlite3 ]; then
+        apt-get -y install sqlite3
+fi
 
 #Create Work dir if not exist
 if [ ! -d /home/sysadmin/manage/ ]; then
