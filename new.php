@@ -46,19 +46,16 @@ $who = getenv('USERNAME') ?: getenv('USER');
 $home = getenv("HOME");
 
 $sshkey =  $home . '/.ssh/id_rsa.pub';
-//print_r($sshkey);
 
 if (file_exists($sshkey)) {
 	echo "The file $sshkey exists";
 	//I dont know $sshpub = file_get_contents('$sshkey', false); would just not work for me
 	$sshpub = exec("cat $sshkey");
-	print_r($sshpub);
 
 } else {
 	echo "The file $sshkey does not exist";
 	exec("ssh-keygen -t rsa -N \"\"");
 	$sshpub = exec("cat $sshkey");
-	print_r($sshpub);
 
 }
 
@@ -77,7 +74,7 @@ if (mysqli_query($link, $sql)) {
 if ($_POST['populate'] == 'yes') {
 	$connection = ssh2_connect($ip, 22);
 	ssh2_auth_password($connection, 'root', $pass);
-	$cmd="id -u syad; if [ $? = 1 ];then useradd -d /home/sysad -p saqrX1N3h1MQ6 -m sysad;fi; if [ ! -d /home/sysad/manage ];then mkdir -p /home/sysad/manage/;fi ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh;/home/sysad/manage/packs.sh all ;su - sysad -c 'mkdir -p /home/sysad/.ssh; chmod 700 /home/sysad/.ssh; echo $sshpub > /home/sysad/.ssh/authorized_keys'";
+	$cmd="id -u syad; if [ $? = 1 ];then useradd -d /home/sysad -p saqrX1N3h1MQ6 -m sysad;fi; if [ ! -d /home/sysad/manage ];then mkdir -p /home/sysad/manage/;fi ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh;/home/sysad/manage/packs.sh all & su - sysad -c 'mkdir -p /home/sysad/.ssh; chmod 700 /home/sysad/.ssh; echo $sshpub > /home/sysad/.ssh/authorized_keys'; echo '10 1 * * * 	root /home/sysad/manage/packs.sh > /etc/crontab' ";
 	$stream = ssh2_exec($connection, $cmd);
 	$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
 	stream_set_blocking($errorStream, true);

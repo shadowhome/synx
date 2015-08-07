@@ -1,6 +1,6 @@
 #!/bin/bash
 
-workdir=/home/sysadmin/manage
+workdir=/home/sysad/manage
 
 #Need this to get changelogs
 if [ ! -x /usr/bin/apt-listchanges ]; then
@@ -11,13 +11,13 @@ if [ ! -x /usr/bin/sqlite3 ]; then
 fi
 
 #Create Work dir if not exist
-if [ ! -d /home/sysadmin/manage/ ]; then
-        mkdir -p /home/sysadmin/manage/
+if [ ! -d /home/sysad/manage/ ]; then
+        mkdir -p /home/sysad/manage/
 fi
 
-if [ ! -f /home/sysadmin/manage/synx.db ]; then
+if [ ! -f /home/sysad/manage/synx.db ]; then
 	STRUCTURE="CREATE TABLE Packages (package TEXT,date TEXT, time TEXT, rc INT, ii INT, upgrade INT, security INT, changelog TEXT, cversion TEXT, oversion TEXT,md5 TEXT);";
-	echo $STRUCTURE |sqlite3 /home/sysadmin/manage/synx.db
+	echo $STRUCTURE |sqlite3 /home/sysad/manage/synx.db
 fi
 
 #Perform checks of all available packages for upgrade
@@ -38,7 +38,7 @@ check () {
 changelog () {
 	cd /var/cache/apt/archives/;
 	apt-get autoclean;
-	packs=$(printf "SELECT package FROM Packages;"|sqlite3 /home/sysadmin/manage/synx.db)
+	packs=$(printf "SELECT package FROM Packages;"|sqlite3 /home/sysad/manage/synx.db)
 	echo $pakcs
 	apt-get download $packs;
 	rm -f $workdir/changelog.*
@@ -80,7 +80,7 @@ inst () {
 	printf 'DELETE FROM Packages;'|sqlite3 $workdir/synx.db
         find /var/lib/dpkg/info -name "*.list" -exec stat -c $'%n\t%y' {} \; |     sed -e 's,/var/lib/dpkg/info/,,' -e 's,\.list\t,\t,' |    sort -n |awk '{print$1, $2, $3}' |sed -e 's/.000000000//g'|sed "s/ /,/g"|sed "s/$/,,,,,,,,/" > $workdir/previous
 	printf ".separator , \n.import $workdir/previous Packages" |sqlite3 $workdir/synx.db
-	for a in `cat /home/sysadmin/manage/previous |awk -F, '{print$1}'` ; do
+	for a in `cat /home/sysa/manage/previous |awk -F, '{print$1}'` ; do
 		for b in `dpkg -l|grep -w $a |grep -v ^ii |awk '{print$2}'`;do
 		printf "UPDATE Packages SET rc = 1 WHERE package = '$b';"|sqlite3 $workdir/synx.db
 		done
