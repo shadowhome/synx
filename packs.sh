@@ -1,13 +1,10 @@
 #!/bin/bash
 
-#update myself
-wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh
-
-workdir=/home/sysadmin/manage/
+workdir=/home/sysadmin/manage
 
 #Need this to get changelogs
-if [ ! -x /usr/bin/apt-listchanges ];then
-        apt-get -y install apt-listchanges
+if [ ! -x /usr/bin/apt-listchanges ]; then
+	apt-get -y install apt-listchanges sqlite3
 fi
 
 #Create Work dir if not exist
@@ -15,33 +12,109 @@ if [ ! -d /home/sysadmin/manage/ ]; then
         mkdir -p /home/sysadmin/manage/
 fi
 
+if [ ! -f /home/sysadmin/manage/synx.db ]; then
+	STRUCTURE="CREATE TABLE Packages (package TEXT,date TEXT, time TEXT, rc INT, ii INT, upgrade INT, security INT, changelog TEXT, cversion TEXT, oversion TEXT,md5 TEXT);";
+	echo $STRUCTURE |sqlite3 /home/sysadmin/manage/synx.db
+fi
+
 #Perform checks of all available packages for upgrade
-if [ $1 == "check" ];then
-        rm -f $workdir/apacks.txt
-        apt-get --just-print upgrade 2>&1 | perl -ne 'if (/Inst\s([\w,\-,\d,\.,~,:,\+]+)\s\[([\w,\-,\d,\.,~,:,\+]+)\]\s\(([\w,\-,\d,\.,~,:,\+]+)\)? /i) {print "PROGRAM: $1 INSTALLED: $2 AVAILABLE: $3\n"}' > $workdir/apacks.txt
-fi
-
-#Get changelogs and md5 for packages
-if [ $1 == "changelog" ];then
-        cd /var/cache/apt/archives/;
-        apt-get autoclean;
-        apt-get download $2;
-        rm -f $workdir/changelog.*
-        for a in `ls *.deb`
-                do echo "START"; apt-listchanges $a |grep -v "Reading changelogs" ;echo "ENDED"
+#if [ $1 == "check" ];then
+check () {
+	rm -f $workdir/apacks.txt
+	apt-get upgrade -s|grep Debian-Security|grep ^Inst |awk '{print$2,$3,$4}' |sed s'/\[//'|sed s'/\]//'|sed s'/(//'| while read -r a ;do
+                pack=`echo $a|awk '{print$1}'`
+                cver=`echo $a|awk '{print$2}'`
+                over=`echo $a|awk '{print$3}'`
+                printf "UPDATE Packages SET upgrade = 1, cversion = '$cver', oversion = '$over' WHERE package = '$pack';"|sqlite3 $workdir/synx.db
         done
-fi
 
+#fi
+}
+#Get changelogs for packages
+#if [ $1 == "changelog" ];then
+changelog () {
+	cd /var/cache/apt/archives/;
+	apt-get autoclean;
+	packs=$(printf "SELECT package FROM Packages;"|sqlite3 /home/sysadmin/manage/synx.db)
+	echo $pakcs
+	apt-get download $packs;
+	rm -f $workdir/changelog.*
+	for a in `ls /var/cache/apt/archives/*.deb`;do
+		changelog=$(apt-listchanges $a|grep -v "Reading changelogs"|sed s"/'//")
+		package=$(dpkg-deb --show $a|awk '{print$1}')
+		printf "UPDATE Packages SET changelog = '$changelog' WHERE package = '$package';" |sqlite3 $workdir/synx.db
+	done
+#fi
+}
 #Check which of these are security
-if [ $1 == "security" ];then
-        rm -f $workdir/spacks.txt
-        apt-get upgrade -s|grep Debian-Security|grep ^Inst |awk '{print"name:",$2,"Current:",$3,"New:"$4}' > /home/sysadmin/manage/spacks.txt
-fi
+#if [ $1 == "security" ];then
+security () {
+	apt-get upgrade -s|grep Debian-Security|grep ^Inst |awk '{print$2,$3,$4}' |sed s'/\[//'|sed s'/\]//'|sed s'/(//'| while read -r a ;do
+		pack=`echo $a|awk '{print$1}'`
+		cver=`echo $a|awk '{print$2}'`
+		over=`echo $a|awk '{print$3}'`
+		printf "UPDATE Packages SET security = 1, cversion = '$cver', oversion = '$over' WHERE package = '$pack';"|sqlite3 $workdir/synx.db
+	done
+#fi
+}
 
 #Get md5
-if [ $1 == "md5" ];then
+#if [ $1 == "md5" ];then
+md5 () {
         cd /var/cache/apt/archives/;
-        for a in `ls *.deb`
-                do dpkg-deb -I $a|grep Package |awk '{print$2}'|tr -d '\n';echo ' '|tr -d '\n';md5sum $a
+        for a in `ls *.deb`;do
+		Package=`dpkg-deb -I $a|grep Package|awk '{print$2}'`
+		md5=`md5sum $a|awk '{print$1}'`
+			printf "UPDATE Packages SET md5 = '$md5' WHERE package = '$Package';"|sqlite3 $workdir/synx.db
         done
-fi
+#fi
+}
+#get all packages installed
+#if [ $1 == "inst" ];then
+inst () {
+	rm $workdir/historical
+	cd $workdir
+	printf 'DELETE FROM Packages;'|sqlite3 $workdir/synx.db
+        find /var/lib/dpkg/info -name "*.list" -exec stat -c $'%n\t%y' {} \; |     sed -e 's,/var/lib/dpkg/info/,,' -e 's,\.list\t,\t,' |    sort -n |awk '{print$1, $2, $3}' |sed -e 's/.000000000//g'|sed "s/ /,/g"|sed "s/$/,,,,,,,,/" > $workdir/previous
+	printf ".separator , \n.import $workdir/previous Packages" |sqlite3 $workdir/synx.db
+	for a in `cat /home/sysadmin/manage/previous |awk -F, '{print$1}'` ; do
+		for b in `dpkg -l|grep -w $a |grep -v ^ii |awk '{print$2}'`;do
+		printf "UPDATE Packages SET rc = 1 WHERE package = '$b';"|sqlite3 $workdir/synx.db
+		done
+	done
+	printf "UPDATE Packages SET ii = 1 WHERE rc != 1;"|sqlite3 $workdir/synx.db
+#fi
+}
+all () {
+	inst
+	check
+	security
+	md5
+	changelog
+}
+
+
+case "$1" in
+        all)
+            all
+            ;;
+
+        check)
+            check
+            ;;
+
+        md5)
+            md5
+            ;;
+        changelog)
+            changelog
+            ;;
+        inst)
+	    inst
+            ;;
+
+        *)
+            echo $"Usage: $0 {all|check|md5|changelog|inst}"
+            exit 1
+
+esac

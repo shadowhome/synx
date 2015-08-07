@@ -10,9 +10,9 @@ function _dbList($stringArray){
 }
 
 function getOS(){
-	$ip = $_GET['ip'];
+	$ip = $_REQUEST['ip'];
 	$lsbresult   = array();
-	$lsbcmd    = exec("ssh root@$ip 'lsb_release -as'",$lsbresult );
+	exec("ssh root@$ip 'lsb_release -as'",$lsbresult );
 	//print_r(exec("ssh root@$ip 'lsb_release -as'",$lsbresult ));
 	$response = array();
 	//print_r($lsbresult);
@@ -24,4 +24,21 @@ function getOS(){
 }
 	return array($OS, $version, $releasever);
 }
+function getPACKS(){
+	$ip = $_GET['ip'];
+	//get some dates
+	$installed = array();
+	exec("ssh root@$ip '/home/sysadmin/bin/packs.sh inst'",$installed);
+	//print_r("ssh root@$ip '/home/sysadmin/bin/packs.sh inst'");
+	//print_r($installed);
+	return array($installed);
+
+}
+function sshiconn(){
+	$connection = ssh2_connect('$ip', 22);
+	ssh2_auth_password($connection, 'root', '$pass');
+	
+	$stream = ssh2_exec($connection, '/usr/local/bin/php -i');
+}
+
 ?>
