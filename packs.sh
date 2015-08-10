@@ -23,7 +23,7 @@ fi
 #Perform checks of all available packages for upgrade
 #if [ $1 == "check" ];then
 check () {
-	rm -f $workdir/apacks.txt
+	apt-get update
 	apt-get upgrade -s|grep Debian-Security|grep ^Inst |awk '{print$2,$3,$4}' |sed s'/\[//'|sed s'/\]//'|sed s'/(//'| while read -r a ;do
                 pack=`echo $a|awk '{print$1}'`
                 cver=`echo $a|awk '{print$2}'`
@@ -75,7 +75,6 @@ md5 () {
 #get all packages installed
 #if [ $1 == "inst" ];then
 inst () {
-	rm $workdir/historical
 	cd $workdir
 	printf 'DELETE FROM Packages;'|sqlite3 $workdir/synx.db
         find /var/lib/dpkg/info -name "*.list" -exec stat -c $'%n\t%y' {} \; |     sed -e 's,/var/lib/dpkg/info/,,' -e 's,\.list\t,\t,' |    sort -n |awk '{print$1, $2, $3}' |sed -e 's/.000000000//g'|sed "s/ /,/g"|sed "s/$/,,,,,,,,/" > $workdir/previous

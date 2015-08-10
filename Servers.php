@@ -131,7 +131,7 @@ if(isset($_GET['id'])){
 	print '<th>Upgradeable</th>';
 	print '<th>Security</th>';
 	print '<th>Changelog</th>';
-	print '<th>Date</th>';
+	print '<th>Date Installed</th>';
 		
 	//while($row1=mysqli_fetch_array($resultp)) {
 	while($row1 = $resultp->fetch_assoc()) {

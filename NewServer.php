@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>Synx Debian Package management</title>
 </head>
 <body>
 <form action="new.php" method="post"><p>

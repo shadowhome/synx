@@ -12,7 +12,7 @@ function _dbList($stringArray){
 function getOS(){
 	$ip = $_REQUEST['ip'];
 	$lsbresult   = array();
-	exec("ssh root@$ip 'lsb_release -as'",$lsbresult );
+	exec("ssh sysad@$ip 'lsb_release -as'",$lsbresult );
 	//print_r(exec("ssh root@$ip 'lsb_release -as'",$lsbresult ));
 	$response = array();
 	//print_r($lsbresult);
