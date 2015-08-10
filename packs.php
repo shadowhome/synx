@@ -21,7 +21,7 @@ list($OS, $version, $releasever) = getOS();
 
 //$sqlnew = "REPLACE INTO servers (OS,version,releasever,id) VALUES ('$OS','$version','$releasever',$id)";
 $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$releasever' WHERE id = $id";
-print_r($sqlnew);
+//print_r($sqlnew);
 
 //list($installed) = getPACKS();
 //$sqlinst="REPLACE INTO packages (package, date, servers) VALUES";
@@ -42,6 +42,7 @@ print_r($sqlnew);
 //$aptup=array();
 
 	//exec("ssh root@$ip '/home/sysadmin/bin/packs.sh check; apt-get update ; cat /home/sysad/manage/apacks.txt'",$aptup);
+	exec("ssh root@$ip 'apt-get update ;/home/sysadmin/bin/packs.sh all");
 	exec("ssh sysad@$ip \"echo 'SELECT package , oversion, security, upgrade, changelog, date, md5, cversion FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $packages);
 	//$response = array();
 	//$condition = '/(PROGRAM:\s*)(.*)(INSTALLED:\s*)(.*)(AVAILABLE:\s*)(.*)/';
@@ -67,10 +68,10 @@ print_r($sqlnew);
 		list($pack, $over,$security, $upgrade, $changelog, $date, $md5, $cver) = explode("|", $md_s);
 		//	print_r($pack);echo '<br/>';echo '<br/>';
 		//	print_r($cver);echo '<br/>';
-		$sql .= $sep."(\"$pack\", \"$over\", \"$security\", \"$upgrade\", $id, $servername, \"$changelog\" , \"$date\",  \"$md5\", \"$cver\")";
+		$sql .= $sep."(\"$pack\", \"$over\", \"$security\", \"$upgrade\", $id, \"$servername\", \"$changelog\" , \"$date\",  \"$md5\", \"$cver\")";
 		$sep = ', ';
 	}
-	print_r($sql);
+//	print_r($sql);
 	//$md5_check = array();
 	
 	//exec("ssh root@$ip '/home/sysadmin/bin/packs.sh md5'", $md5_check);
@@ -165,7 +166,7 @@ print_r($sqlnew);
 //			mysqli_query($conn, $sql_cl);
 //		}
 		echo "New record created successfully";
-	//	header( "Location: Servers.php" );
+		header( "Location: Servers.php" );
 	} else {
 		echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 	}

@@ -100,14 +100,14 @@ if ($_REQUEST['populate'] == 'yes') {
 	exec("ssh sysad@$ip \"echo 'SELECT package, cversion, oversion, md5, upgrade, security FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $packages);
 //	print_r($packages);
 
-	$sql="INSERT INTO packages(package,servers,version,nversion, md5, upgrade, security) VALUES ";
+	$sql="INSERT INTO packages(package,servers,version,nversion, md5, upgrade, security, servername) VALUES ";
 	$sep = '';
 	
 	foreach ($packages as $md_s) {
 		list($pack, $cver, $over, $md5, $upgrade, $sec) = explode("|", $md_s);
 		//	print_r($pack);echo '<br/>';echo '<br/>';
 		//	print_r($cver);echo '<br/>';
-		$sql .= $sep."(\"$pack\", $id, \"$cver\", \"$over\", \"$md5\", \"$upgrade\", \"$sec\")";
+		$sql .= $sep."(\"$pack\", $id, \"$cver\", \"$over\", \"$md5\", \"$upgrade\", \"$sec\", \"$servername\")";
 		$sep = ', ';
 	}
 	
