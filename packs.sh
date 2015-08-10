@@ -43,7 +43,7 @@ changelog () {
 	apt-get download $packs;
 	rm -f $workdir/changelog.*
 	for a in `ls /var/cache/apt/archives/*.deb`;do
-		changelog=$(apt-listchanges $a|grep -v "Reading changelogs"|sed s"/'//")
+		changelog=$(apt-listchanges -f text -a $a|grep -v "Reading changelogs"|sed s"/'//")
 		package=$(dpkg-deb --show $a|awk '{print$1}')
 		printf "UPDATE Packages SET changelog = '$changelog' WHERE package = '$package';" |sqlite3 $workdir/synx.db
 	done
