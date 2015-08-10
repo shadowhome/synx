@@ -10,7 +10,7 @@ if (!$conn) {
 }
 $result = $conn->query($servers);
 if ($result->num_rows > 0) {
-	// output data of each row
+
 	while($row = $result->fetch_assoc()) {
 
 		echo "id: " . $row["id"]. 
@@ -49,15 +49,13 @@ if(isset($_GET['id'])){
 	$id = $_GET['id'];
 	$updatesOnly = (isset($_REQUEST['updates']) && $_REQUEST['updates']==='1');
 	$secOnly = (isset($_REQUEST['sec']) && $_REQUEST['sec']==='1');
-	//echo ($updatesOnly)?'updates: yes':'updates: no';
 	$sql="SELECT  id, servername, ip, company, version, OS, description, releasever FROM servers WHERE id = '$id'";
 	$result=mysqli_query($conn, $sql);
 	$row=mysqli_fetch_array($result);
-	$packs="SELECT package, OS, version, upgrade, security, changelog, date from packages where servers = '$id' ".(($updatesOnly)?' AND upgrade="1"':'').(($secOnly)?' AND security="1"':'');
+	$packs="SELECT package, OS, version, upgrade, security, changelog, date, rc, ii, md5 from packages where servers = '$id' ".(($updatesOnly)?' AND upgrade="1"':'').(($secOnly)?' AND security="1"':'');
 	
 	
 	$resultp=mysqli_query($conn, $packs);
-	print_r($packs);
 	$id=$row['id'];
 	$servername=$row['servername'];
 	$ip=$row['ip'];
@@ -119,10 +117,6 @@ if(isset($_GET['id'])){
 	</form>
 
 <?php	
-	//$resultp=mysqli_query($conn, $packs);
-	//print_r($resultp);
-	//print_r('andy');
-	//print_r($packs);
 
 	print '<table border="1">';
 	print '<th>ID</th>';
@@ -132,12 +126,13 @@ if(isset($_GET['id'])){
 	print '<th>Security</th>';
 	print '<th>Changelog</th>';
 	print '<th>Date Installed</th>';
+	print '<th>rc</th>';
+	print '<th>ii</th>';
+	print '<th>md5</th>';
 		
-	//while($row1=mysqli_fetch_array($resultp)) {
 	while($row1 = $resultp->fetch_assoc()) {
-		//print_r($resultp); 
+
 		print '<tr>';
-		//print '<td>'.$row1["servers"].'</td>';
 		print '<td>'.$id;
 		print '<td>'.$row1["package"].'</td>';
 		print '<td>'.$row1["version"].'</td>';
@@ -145,16 +140,12 @@ if(isset($_GET['id'])){
 		print '<td>'.$row1["security"].'</td>';
 		print '<td>'.nl2br($row1["changelog"]).'</td>';
 		print '<td>'.$row1["date"].'</td>';
+		print '<td>'.$row1["rc"].'</td>';
+		print '<td>'.$row1["ii"].'</td>';
+		print '<td>'.$row1["md5"].'</td>';
 		print '</tr>';
 		
-		//print_r($row1);
-		//echo "List of Installed Packages:". 
-		//" - Package: " . $row1["package"].
-		//" - Version: " . $row1["version"].
-		//" - Upgradeable: " . $row1["upgrade"].
-		//" - Security: " . $row1["security"].
-		//"\n".
-		//"<br>"; 
+
 	}
 	print '</table>';
 

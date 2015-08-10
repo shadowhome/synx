@@ -17,7 +17,6 @@ $company = mysqli_real_escape_string($link, $_REQUEST['company']);
 
 $pass = mysqli_real_escape_string($link, $_REQUEST['pass']);
 
-
 //$OS = mysqli_real_escape_string($link, $_POST['OS']);
 //$lsbresult   = array();
 //$lsbcmd    = exec("ssh root@$ip 'lsb_release -as'",$lsbresult );
@@ -26,7 +25,7 @@ $pass = mysqli_real_escape_string($link, $_REQUEST['pass']);
 //print_r($lsbresult);
 
 
-list($OS, $version, $releasever) = getOS();
+@list($OS, $version, $releasever) = getOS($pass);
 //if(!empty($lsbresult)) {
 //	$OS        = $lsbresult[0];
 //	$version  = $lsbresult[3];
@@ -38,7 +37,16 @@ list($OS, $version, $releasever) = getOS();
 $description = mysqli_real_escape_string($link, $_POST['description']);
 
 $sql = "INSERT INTO servers (servername,ip,company,OS,version,description,releasever) VALUES ('$servername','$ip','$company','$OS','$version','$description','$releasever')";
-$resultp=mysqli_query($link, $sql);
+
+	if (mysqli_query($link, $sql)) {
+		echo "New Server created successfully";
+		//header( "Location: index.php" );
+	} else {
+		echo "Error: " . $sql . "<br>" . mysqli_error($link);
+		die("Server already exists");
+	}
+
+// $resultp=mysqli_query($link, $sql);
 $serverid=0;
 
 $who = getenv('USERNAME') ?: getenv('USER');
@@ -81,7 +89,7 @@ if ($_REQUEST['populate'] == 'yes') {
 	echo "Running populate";
 	$connection = ssh2_connect($ip, 22);
 	ssh2_auth_password($connection, 'root', $pass);
-	$cmd="id -u syad; if [ $? = 1 ];then useradd -d /home/sysad -p saqrX1N3h1MQ6 -m sysad;fi; if [ ! -d /home/sysad/manage ];then mkdir -p /home/sysad/manage/;fi ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh;/home/sysad/manage/packs.sh all ; su - sysad -c 'mkdir -p /home/sysad/.ssh; chmod 700 /home/sysad/.ssh; echo $sshpub > /home/sysad/.ssh/authorized_keys'; echo '10 1 * * * root /home/sysad/manage/packs.sh all >> /etc/crontab' ";
+	$cmd="id -u syad; if [ $? = 1 ];then useradd -d /home/sysad -p saqrX1N3h1MQ6 -m sysad;fi; if [ ! -d /home/sysad/manage ];then mkdir -p /home/sysad/manage/;fi ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh;/home/sysad/manage/packs.sh all ; su - sysad -c 'mkdir -p /home/sysad/.ssh; chmod 700 /home/sysad/.ssh; echo \"$sshpub\" > /home/sysad/.ssh/authorized_keys'; echo '10 1 * * * root /home/sysad/manage/packs.sh all >> /etc/crontab' ";
 	$stream = ssh2_exec($connection, $cmd);
 	$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
 	stream_set_blocking($errorStream, true);
@@ -110,7 +118,6 @@ if ($_REQUEST['populate'] == 'yes') {
 		$sql .= $sep."(\"$pack\", $id, \"$cver\", \"$over\", \"$md5\", \"$upgrade\", \"$sec\", \"$servername\")";
 		$sep = ', ';
 	}
-	
 	
 	
 //	$sql='INSERT INTO packages(package,version,OS,servername,servers) VALUES ';

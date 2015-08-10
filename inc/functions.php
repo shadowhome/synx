@@ -9,18 +9,32 @@ function _dbList($stringArray){
 	return implode(', ',$stringArray);
 }
 
-function getOS(){
+function getOS($pass=false){
 	$ip = $_REQUEST['ip'];
 	$lsbresult   = array();
-	exec("ssh sysad@$ip 'lsb_release -as'",$lsbresult );
-	//print_r(exec("ssh root@$ip 'lsb_release -as'",$lsbresult ));
-	$response = array();
-	//print_r($lsbresult);
+	if (isset($pass) && $pass){
+		$connection = ssh2_connect($ip, 22);
+		echo ssh2_auth_password($connection, 'root', $pass)?'success':'fail';
+		$cmd="lsb_release -as";
+		$stream = ssh2_exec($connection, $cmd);
+		$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
+		stream_set_blocking($errorStream, true);
+		stream_set_blocking($stream, true);
+		$lsbresult = stream_get_contents($stream);
+	}
+	else {
+		exec("ssh sysad@$ip 'lsb_release -as'",$lsbresult );
+	}
+
 
 		if(!empty($lsbresult)) {
 		$OS        = $lsbresult[0];
 		$version  = $lsbresult[3];
 		$releasever = $lsbresult[2];
+		}
+		else {
+			echo "No values present";
+			die();
 }
 	return array($OS, $version, $releasever);
 }
@@ -28,7 +42,7 @@ function getPACKS(){
 	$ip = $_GET['ip'];
 	//get some dates
 	$installed = array();
-	exec("ssh root@$ip '/home/sysadmin/bin/packs.sh inst'",$installed);
+	exec("ssh root@$ip '/home/sysad/manage/packs.sh inst'",$installed);
 	//print_r("ssh root@$ip '/home/sysadmin/bin/packs.sh inst'");
 	//print_r($installed);
 	return array($installed);
