@@ -1,7 +1,8 @@
 <?php
 include 'inc/upconfig.php';
 $servers = 'SELECT * from servers ORDER BY servername';
-
+include 'nav.php';
+echo CNavigation::GenerateMenu($menu);
 // Create connection
 $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 // Check connection

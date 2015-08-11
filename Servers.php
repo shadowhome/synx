@@ -1,5 +1,7 @@
 <?php
 include 'inc/upconfig.php';
+include 'nav.php';
+echo CNavigation::GenerateMenu($menu);
 
 $servers = 'SELECT * from servers ORDER BY servername';
 

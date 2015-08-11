@@ -11,7 +11,7 @@ function _dbList($stringArray){
 
 function getOS($pass=false){
 	$ip = $_REQUEST['ip'];
-	$lsbresult   = array();
+	$lsbresult1   = array();
 	if (isset($pass) && $pass){
 		$connection = ssh2_connect($ip, 22);
 		echo ssh2_auth_password($connection, 'root', $pass)?'success':'fail';
@@ -20,13 +20,13 @@ function getOS($pass=false){
 		$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
 		stream_set_blocking($errorStream, true);
 		stream_set_blocking($stream, true);
-		$lsbresult = stream_get_contents($stream);
+		$lsbresult1 = stream_get_contents($stream);
 	}
 	else {
-		exec("ssh sysad@$ip 'lsb_release -as'",$lsbresult );
+		$lsbresult1 = array();
+		exec("ssh sysad@$ip 'lsb_release -as'",$lsbresult1 );
 	}
-
-
+		$lsbresult = explode("\n", $lsbresult1);
 		if(!empty($lsbresult)) {
 		$OS        = $lsbresult[0];
 		$version  = $lsbresult[3];
