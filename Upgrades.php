@@ -39,7 +39,19 @@
 </head> 
 <body>
     <h1 style="padding-bottom: 20px">Server Upgrade</h1>
+        <p>
+            What would you like to upgrade?
+        </p>
+        <p>
+            <input type="hidden" name=id value="<?php echo $id?>">
+            <input type="hidden" name=ip value="<?php echo $ip?>">
+            <input type="hidden" name=servername value="<?php echo $servername?>">
+            <input type="submit" name="Check" value="Updates">
+            <input type="submit" name="Sec" value="Security">
 
+            
+            
+        </p>
 <?php
 echo 'IP:';
 print_r($ip);
@@ -103,25 +115,26 @@ if(isset($_GET['Sec'])){
     }
 
     print '</table>';
-
+    echo "<input type=\"submit\" name=\"Go\" value=\"Go\">";
     // exec("ssh root@$ip apt-get -y upgrade 2>&1", $return );
     // var_dump($return);
 }
+
+//if(isset($_GET['Go'])){
+
+//$secpack = $_GET['sec-packages'];
+//$sqln = "SELECT package FROM packages where security = 1 AND servers = $id AND id = $secpack" ;
+//$results = $conn->query($sqln);
+//print_r($results);
+	// exec("ssh root@$ip 'export DEBIAN_FRONTEND=noninteractive; apt-get -y upgrade 2>&1'", $return );
+	// var_dump($return);
+//}
 
 mysqli_close($conn);
 
 ?>
 
-        <p>
-            What would you like to upgrade?
-        </p>
-        <p>
-            <input type="hidden" name=id value="<?php echo $id?>">
-            <input type="hidden" name=ip value="<?php echo $ip?>">
-            <input type="hidden" name=servername value="<?php echo $servername?>">
-            <input type="submit" name="Check" value="Updates">
-            <input type="submit" name="Sec" value="Security">
-        </p>
+
     </form>
 </body>
 </html>

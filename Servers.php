@@ -1,5 +1,6 @@
 <?php
 include 'inc/upconfig.php';
+
 $servers = 'SELECT * from servers ORDER BY servername';
 
 // Create connection
@@ -9,6 +10,18 @@ if (!$conn) {
 	die("Connection failed: " . mysqli_connect_error());
 }
 $result = $conn->query($servers);
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Server Manager</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+</head> 
+<body>
+
+<h1 style="padding-bottom: 20px">Server Manager</h1>
+<?php
+
 if ($result->num_rows > 0) {
 
 	while($row = $result->fetch_assoc()) {
@@ -40,6 +53,7 @@ $conn->close();
     </form>
     
    <br><br>
+   
 <?php
 $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 if (!$conn) {
@@ -182,6 +196,8 @@ if(isset($_GET['id'])){
 //  }
   mysqli_close($conn);
 //}
-?>
 
+?>
+  </body>
+  </html>
   
