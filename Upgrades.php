@@ -1,5 +1,6 @@
 <?php
-
+include 'nav.php';
+echo CNavigation::GenerateMenu($menu);
     include 'inc/upconfig.php';
 
     $servername = (isset($_GET['servername'])) ? $_GET['servername'] : null;
@@ -109,26 +110,40 @@ if(isset($_GET['Sec'])){
 }
 if(isset($_GET['Go'])){
 	$secid = array();
-	$secid = $_GET['sec-packages'];
+	$secid = (isset($_GET['sec-packages']))?$_GET['sec-packages']:$_GET['check-packages'];
+	print_r($secid);
 	$packages = array();
 	echo "<p>Your going to upgrade:</p>";
 	foreach ($secid as $secpack) {
 	$sqln = "SELECT package FROM packages where id = $secpack and servers = $id";
 	$resultu = $conn->query($sqln);
 	
-	while ($row = $resultu->fetch_array()) {
+	while ($row = $resultu->fetch_assoc()) {
 		echo "Package:" . $row['package']; echo "<br/>";
-		$packages[] = $row;
+		$packages[] = $row['package'];
+		
 	} 
 	
 	}
-	echo "<input type=\"Submit\" name=\"Yes\" value=\"Yes\">";
-//	print_r($packages);
-	if(isset($_GET['Yes'])){
-		exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y $package", $output);
-		var_dump($output);
-	}
+	//print_r($packages);
+	//print_r($row);
+	echo "<input type=\"Submit\" name=\"Yes\" value=\"Confirm\">";
+	echo "<input type=\"hidden\" name=packs value=\"".implode(" ", $packages)."\">";
+
 }
+
+ 	
+
+//	print_r($packages);
+
+	if(isset($_GET['Yes'])){
+		$packages = $_GET['packs'];
+		//$package = implode(" ", $packages);
+		print_r($packages);
+		exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install $packages'", $output);
+		echo implode('<br/>',$output);
+	}
+
 
 
 mysqli_close($conn);

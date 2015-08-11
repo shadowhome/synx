@@ -59,11 +59,9 @@ $getid = "SELECT id FROM servers where ip = '$ip'";
 $resultp=mysqli_query($link, $getid);
 $row=mysqli_fetch_assoc($resultp);
 $id=$row['id'];
-//print_r($id);
 
 if (file_exists($sshkey)) {
-//	echo "The file $sshkey exists";
-	//I dont know $sshpub = file_get_contents('$sshkey', false); would just not work for me
+
 	$sshpub = exec("cat $sshkey");
 
 } else {
@@ -72,16 +70,6 @@ if (file_exists($sshkey)) {
 	$sshpub = exec("cat $sshkey");
 
 }
-
-
-
-//if (mysqli_query($link, $sql)) {
-//	echo "New record created successfully";
-//	$serverid=mysqli_insert_id($link);
-//	//header( "Location: index.php" );
-//} else {
-//	echo "Error: " . $sql . "<br>" . mysqli_error($link);
-//}
 
 
 
@@ -94,51 +82,18 @@ if ($_REQUEST['populate'] == 'yes') {
 	$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
 	stream_set_blocking($errorStream, true);
 	stream_set_blocking($stream, true);
-	//$stream = ssh2_exec($connection, "id -u syad; if [ $? = 1 ];then useradd -d /home/sysad -p saqrX1N3h1MQ6 -m sysad;fi; if [ ! -d /home/sysad/manage ];then mkdir -p /home/sysad/manage/;fi ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh;/home/sysad/manage/packs.sh all & ;su - sysad -c 'ssh-keygen -t rsa -N \"\" -t rsa; echo $sshpub > /home/sysad/.ssh/authorized_keys'");
-	//print_r($stream);
-	//echo "Error: " . stream_get_contents($errorStream);
-	//echo "Output: " . stream_get_contents($stream);
-	//exec("ssh root@$ip 'dpkg-query --show'",$packages);
-	//exec("ssh root@$ip "'if [ ! -d /home/sysad/manage/packs.sh ];then mkdir /home/sysad/manage/packs.sh;fi' ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh"");
-	//exec("ssh root@$ip \"'if [ ! -d /home/sysad/manage/packs.sh ];then mkdir /home/sysad/manage/packs.sh;fi' ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh \"");
-//	$response = array();
-	//print_r($packages);
-	//$out=array();
-//	$sqlval=array();
 	exec("ssh sysad@$ip \"echo 'SELECT package, cversion, oversion, md5, upgrade, security FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $packages);
-//	print_r($packages);
-
 	$sql="INSERT INTO packages(package,servers,version,nversion, md5, upgrade, security, servername) VALUES ";
 	$sep = '';
 	
 	foreach ($packages as $md_s) {
 		list($pack, $cver, $over, $md5, $upgrade, $sec) = explode("|", $md_s);
-		//	print_r($pack);echo '<br/>';echo '<br/>';
-		//	print_r($cver);echo '<br/>';
 		$sql .= $sep."(\"$pack\", $id, \"$cver\", \"$over\", \"$md5\", \"$upgrade\", \"$sec\", \"$servername\")";
 		$sep = ', ';
 	}
 	
 	
-//	$sql='INSERT INTO packages(package,version,OS,servername,servers) VALUES ';
-//	foreach ($packages as $package) {
-//		$condition = '/(\S+)(\s)(\S+)/';
-//		preg_match_all($condition, $package, $response);
-//		$name = $response[1][0];
-//		$version = $response[3][0];
-//		$sqlval[]='("'.$name.'" , "'.$version.'", "'.$OS.'", "'.$servername.'", "'.$serverid.'")';
-//	}
-//	$sql.=implode(',' , $sqlval);
-	
 
-	
-	//print_r($sql);
-//	if (mysqli_query($link, $sql)) {
-//		echo "New record created successfully";
-//		header( "Location: index.php" );
-//	} else {
-//		echo "Error: " . $sql . "<br>" . mysqli_error($link);
-//	}
 		
 }
 mysqli_close($link);
