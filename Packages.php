@@ -1,8 +1,7 @@
 <?php
-include 'inc/upconfig.php';
-
-
-
+	//Include a generic header
+	include 'inc/html/header.php';
+	include 'inc/upconfig.php';
 
 // Create connection
 $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);

@@ -1,4 +1,6 @@
 <?php
+//Include a generic header
+include 'inc/html/header.php';
 include 'inc/upconfig.php';
 $servers = 'SELECT * from servers ORDER BY servername';
 
@@ -22,16 +24,20 @@ $company     = $row['company'];
 $description = $row['description'];
 mysqli_close($conn);
 ?>
+
+<div class="page-header">
+	<h1 style="text-align: center;">Delete?</h1>
+</div>
+
 <form action="DelServer.php" method="get">
     <?php foreach($arrRows as $row) : ?>
-
-    <input type="radio" name="server"  value="<?php echo $row['id']; ?>" /> <?php echo $row['servername']; ?>
-    
+	    <input type="radio" name="server" value="<?php echo $row['id']; ?>" /> <?php echo $row['servername']; ?><br />
     <?php endforeach; ?>
-
-  <input type="submit" value="submit" />
-
+    <br />
+  <input class="btn btn-default" type="submit" value="submit" />
 </form>
+<a href="Servers.php" class="btn btn-lg btn-link" style="float: right;">Back to Servers</a>
+<br /><br />
 <?php
 if(isset($_GET['server'])){
 	$server=$_GET['server'];
@@ -53,4 +59,6 @@ if (mysqli_query($conn, $sql)&&mysqli_query($conn, $sql2)) {
 }
 mysqli_close($conn);
 }
-
+	//Include a generic footer
+	include 'inc/html/footer.php';
+?>

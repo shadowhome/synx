@@ -1,5 +1,6 @@
 <?php
-
+    //Include a generic header
+    include 'inc/html/header.php';
     include 'inc/upconfig.php';
 
     $servername = (isset($_GET['servername'])) ? $_GET['servername'] : null;
@@ -15,11 +16,7 @@
     	exit;
     }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Upgrades to Server</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
     <script>
     jQuery(document).ready(function() {
         jQuery('.select-all').click(function(event) {  //on click
@@ -36,9 +33,9 @@
         });
     });
     </script>
-</head> 
-<body>
-    <h1 style="padding-bottom: 20px">Server Upgrade</h1>
+<div class="page-header">
+    <h1 style="text-align: center;">Server Upgrade</h1>
+</div>
         <p>
             What would you like to upgrade?
         </p>
@@ -46,10 +43,8 @@
             <input type="hidden" name=id value="<?php echo $id?>">
             <input type="hidden" name=ip value="<?php echo $ip?>">
             <input type="hidden" name=servername value="<?php echo $servername?>">
-            <input type="submit" name="Check" value="Updates">
-            <input type="submit" name="Sec" value="Security">
-
-            
+            <input type="submit" class="btn btn-default" name="Check" value="Updates">
+            <input type="submit" class="btn btn-default" name="Sec" value="Security">
             
         </p>
 <?php
@@ -136,5 +131,7 @@ mysqli_close($conn);
 
 
     </form>
-</body>
-</html>
+<?php
+    //Include a generic footer
+    include 'inc/html/footer.php';
+?>

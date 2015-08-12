@@ -1,14 +1,12 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
-</head>
+<?php
+	//Include a generic header
+	include 'inc/html/header.php';
+?>
+<div class="page-header">
+	<h1 style="text-align: center;">Hello World</h1>
+</div>
 
-    <?php
-include 'nav.php';
-echo CNavigation::GenerateMenu($menu);
-	?>
-    </body>
-
-</html>
+<?php
+	//Include a generic footer
+	include 'inc/html/footer.php';
+?>
