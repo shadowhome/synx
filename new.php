@@ -18,6 +18,8 @@ $company = mysqli_real_escape_string($link, $_REQUEST['company']);
 
 $pass = mysqli_real_escape_string($link, $_REQUEST['pass']);
 
+$sshp = mysqli_real_escape_string($link, $_REQUEST['sshp']);
+
 //$OS = mysqli_real_escape_string($link, $_POST['OS']);
 //$lsbresult   = array();
 //$lsbcmd    = exec("ssh root@$ip 'lsb_release -as'",$lsbresult );
@@ -37,7 +39,7 @@ $pass = mysqli_real_escape_string($link, $_REQUEST['pass']);
 
 $description = mysqli_real_escape_string($link, $_POST['description']);
 
-$sql = "INSERT INTO servers (servername,ip,company,OS,version,description,releasever) VALUES ('$servername','$ip','$company','$OS','$version','$description','$releasever')";
+$sql = "INSERT INTO servers (servername,ip,company,OS,version,description,releasever,sshp) VALUES ('$servername','$ip','$company','$OS','$version','$description','$releasever','$sshp')";
 
 	if (mysqli_query($link, $sql)) {
 		echo "New Server created successfully";
@@ -75,14 +77,24 @@ if (file_exists($sshkey)) {
 
 
 if ($_REQUEST['populate'] == 'yes') {
-	echo "Running populate";
-	$connection = ssh2_connect($ip, 22);
-	ssh2_auth_password($connection, 'root', $pass);
-	$cmd="id -u syad; if [ $? = 1 ];then useradd -d /home/sysad -p saqrX1N3h1MQ6 -m sysad;fi; if [ ! -d /home/sysad/manage ];then mkdir -p /home/sysad/manage/;fi ;wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh;/home/sysad/manage/packs.sh all ; su - sysad -c 'mkdir -p /home/sysad/.ssh; chmod 700 /home/sysad/.ssh; echo \"$sshpub\" > /home/sysad/.ssh/authorized_keys'; echo \"10 1 * * * root /home/sysad/manage/packs.sh all\" >> /etc/crontab;echo \"sysad   ALL=(root)      NOPASSWD: /usr/bin/apt-get\" >> /etc/sudoers ";
-	$stream = ssh2_exec($connection, $cmd);
-	$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
-	stream_set_blocking($errorStream, true);
-	stream_set_blocking($stream, true);
+
+	echo "Setting up non-privelged ssh user \"sysad\"";
+	$cmd="id -u syad; if [ $? = 1 ];then useradd -d /home/sysad -p saqrX1N3h1MQ6 -m sysad;fi; if [ ! -d /home/sysad/manage ];then mkdir -p /home/sysad/manage/;fi ";
+	echo "Getting bash script needed to populate database and setting permissions";
+	$cmd2="wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh";
+	echo "Setting cronjobs and sudo access to perform upgrades when asked to";
+	$cmd3="su - sysad -c 'mkdir -p /home/sysad/.ssh; chmod 700 /home/sysad/.ssh; echo \"$sshpub\" > /home/sysad/.ssh/authorized_keys';echo \"10 1 * * * root /home/sysad/manage/packs.sh all\" >> /etc/crontab;echo \"sysad   ALL=(root)      NOPASSWD: /usr/bin/apt-get\" >> /etc/sudoers ";	
+	echo "Running populate which may take a while";
+	$cmd4="/home/sysad/manage/packs.sh all";
+	sshiconn($cmd, $pass, $ip);
+	flush();
+	sshiconn($cmd2, $pass, $ip);
+	flush();
+	sshiconn($cmd3, $pass, $ip);
+	flush();
+	sshiconn($cmd4, $pass, $ip);
+	flush();
+	echo "If the above completed we're going to retrieve some data";
 	exec("ssh sysad@$ip \"echo 'SELECT package, cversion, oversion, md5, upgrade, security FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $packages);
 	$sql="INSERT INTO packages(package,servers,version,nversion, md5, upgrade, security, servername) VALUES ";
 	$sep = '';
@@ -95,7 +107,7 @@ if ($_REQUEST['populate'] == 'yes') {
 	
 	
 
-		
-}
+}		
+
 mysqli_close($link);
 ?>

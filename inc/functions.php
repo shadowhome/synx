@@ -48,11 +48,28 @@ function getPACKS(){
 	return array($installed);
 
 }
-function sshiconn(){
-	$connection = ssh2_connect('$ip', 22);
-	ssh2_auth_password($connection, 'root', '$pass');
+function sshiconn($cmd, $pass, $ip, $sshp=22){
 	
-	$stream = ssh2_exec($connection, '/usr/local/bin/php -i');
+	$ip = $_REQUEST['ip'];
+	$pass = $_REQUEST['pass'];
+	$sshp = $_REQUEST['sshp'];
+	$connection = ssh2_connect($ip, $sshp);
+	ssh2_auth_password($connection, 'root', $pass);
+	$stream = ssh2_exec($connection, $cmd);
+	$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
+	stream_set_blocking($errorStream, true);
+	stream_set_blocking($stream, true);
+//	$response = '';
+//	while($buffer = fread($stream, 4096)) {
+//	$response .= $buffer;
+//	}
+	
+	return stream_get_contents($stream);
+	fclose($stream);
+	fclose($errorStream);
+	ssh2_exec($connection, 'exit');
+	unset($connection);
+//	echo $response;
 }
 
 ?>

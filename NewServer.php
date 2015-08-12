@@ -1,3 +1,8 @@
+<?php 
+include 'nav.php';
+echo CNavigation::GenerateMenu($menu);
+?>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN">
 <html>
 <head>
@@ -9,6 +14,8 @@
 ServerName: <input type="text" name="servername" value="<?php echo 'servername';?>" id='servername'><br><br>
 
 IP: <input type="text" name="ip" value="<?php echo 'ip';?>" id='ip'><br><br>
+
+SSH Port: <input type="text" name="sshp" value="<?php echo '22';?>" id='sshp'><br><br>
 
 Company: <input type="text" name="company" value="<?php echo 'company';?>" id=company><br><br>
 
