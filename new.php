@@ -1,8 +1,9 @@
 <?php
 include 'inc/upconfig.php';
 include 'inc/functions.php';
-include 'nav.php';
-echo CNavigation::GenerateMenu($menu);
+//Include a generic header
+include 'inc/html/header.php';
+
 // Create connection
 $link = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 // Check connection
@@ -110,4 +111,7 @@ if ($_REQUEST['populate'] == 'yes') {
 }		
 
 mysqli_close($link);
+
+	//Include a generic footer
+	include 'inc/html/footer.php';
 ?>

@@ -4,8 +4,8 @@ include 'inc/functions.php';
 ini_set('post_max_size','20M');
 ini_set('upload_max_filesize','2M');
 ini_set('max_execution_time', '3600');
-include 'nav.php';
-echo CNavigation::GenerateMenu($menu);
+//Include a generic header
+include 'inc/html/header.php';
 
 // Create connection
 $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
