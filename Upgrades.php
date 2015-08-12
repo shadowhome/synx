@@ -17,7 +17,7 @@
     }
 ?>
 
-    <script>
+    <script type="text/javascript">
     jQuery(document).ready(function() {
         jQuery('.select-all').click(function(event) {  //on click
             var strPackage = jQuery(this).data('package');
@@ -33,9 +33,12 @@
         });
     });
     </script>
+
+<div class="container">
 <div class="page-header">
     <h1 style="text-align: center;">Server Upgrade</h1>
 </div>
+
 <?php
 echo 'IP:';
 print_r($ip);
@@ -112,13 +115,11 @@ if(isset($_GET['Go'])){
 	foreach ($secid as $secpack) {
 	$sqln = "SELECT package FROM packages where id = $secpack and servers = $id";
 	$resultu = $conn->query($sqln);
-	
-	while ($row = $resultu->fetch_assoc()) {
-		echo "Package:" . $row['package']; echo "<br/>";
-		$packages[] = $row['package'];
-		
-	} 
-	
+    	while ($row = $resultu->fetch_assoc()) {
+    		echo "Package:" . $row['package']; echo "<br/>";
+    		$packages[] = $row['package'];
+    		
+    	} 
 	}
 	//print_r($packages);
 	//print_r($row);
@@ -127,10 +128,8 @@ if(isset($_GET['Go'])){
 
 }
 
- 	
-
+ 
 //	print_r($packages);
-
 	if(isset($_GET['Yes'])){
 		$packages = $_GET['packs'];
 		//$package = implode(" ", $packages);
@@ -139,24 +138,20 @@ if(isset($_GET['Go'])){
 		echo implode('<br/>',$output);
 	}
 
-
-
 mysqli_close($conn);
 
 ?>
-
-        <p>
-            What would you like to upgrade?
-        </p>
-        <p>
-            <input type="hidden" name=id value="<?php echo $id?>">
-            <input type="hidden" name=ip value="<?php echo $ip?>">
-            <input type="hidden" name=servername value="<?php echo $servername?>">
-            <input type="submit" class="btn btn-default" name="Check" value="Updates">
-            <input type="submit" class="btn btn-default" name="Sec" value="Security">
-            <input type="Submit" class="btn btn-default" name="Go" value="Go">
-        </p>
-    </form>
+    <p>What would you like to upgrade?</p>
+    <p>
+        <input type="hidden" name=id value="<?php echo $id?>">
+        <input type="hidden" name=ip value="<?php echo $ip?>">
+        <input type="hidden" name=servername value="<?php echo $servername?>">
+        <input type="submit" class="btn btn-default" name="Check" value="Updates">
+        <input type="submit" class="btn btn-default" name="Sec" value="Security">
+        <input type="Submit" class="btn btn-default" name="Go" value="Go">
+    </p>
+</form>
+</div>
 <?php
     //Include a generic footer
     include 'inc/html/footer.php';

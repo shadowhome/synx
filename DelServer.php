@@ -25,19 +25,21 @@ $description = $row['description'];
 mysqli_close($conn);
 ?>
 
-<div class="page-header">
-	<h1 style="text-align: center;">Delete?</h1>
-</div>
+<div class="container">
+	<div class="page-header">
+		<h1 style="text-align: center;">Delete?</h1>
+	</div>
 
-<form action="DelServer.php" method="get">
-    <?php foreach($arrRows as $row) : ?>
-	    <input type="radio" name="server" value="<?php echo $row['id']; ?>" /> <?php echo $row['servername']; ?><br />
-    <?php endforeach; ?>
-    <br />
-  <input class="btn btn-default" type="submit" value="submit" />
-</form>
-<a href="Servers.php" class="btn btn-lg btn-link" style="float: right;">Back to Servers</a>
-<br /><br />
+	<form action="DelServer.php" method="get">
+	    <?php foreach($arrRows as $row) : ?>
+		    <input type="radio" name="server" value="<?php echo $row['id']; ?>" /> <?php echo $row['servername']; ?><br />
+	    <?php endforeach; ?>
+	    <br />
+	  <input class="btn btn-default" type="submit" value="submit" />
+	</form>
+	<a href="Servers.php" class="btn btn-lg btn-link" style="float: right;">Back to Servers</a>
+	<br /><br />
+</div>
 <?php
 if(isset($_GET['server'])){
 	$server=$_GET['server'];
