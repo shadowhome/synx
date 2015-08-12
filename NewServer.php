@@ -15,6 +15,10 @@
 		<input type="text" class="form-control" id="ip" name="ip" placeholder="ip">
 	</div>
 	<div class="form-group">
+		<label for="sshp">SSH Port</label>
+		<input type="text" class="form-control" id="sshp" name="sshp" placeholder="<?php echo '22';?>">
+	</div>
+	<div class="form-group">
 		<label for="company">Company</label>
 		<input type="text" class="form-control" id="company" name="company" placeholder="company">
 	</div>

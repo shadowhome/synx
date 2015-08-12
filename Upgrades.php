@@ -36,17 +36,6 @@
 <div class="page-header">
     <h1 style="text-align: center;">Server Upgrade</h1>
 </div>
-        <p>
-            What would you like to upgrade?
-        </p>
-        <p>
-            <input type="hidden" name=id value="<?php echo $id?>">
-            <input type="hidden" name=ip value="<?php echo $ip?>">
-            <input type="hidden" name=servername value="<?php echo $servername?>">
-            <input type="submit" class="btn btn-default" name="Check" value="Updates">
-            <input type="submit" class="btn btn-default" name="Sec" value="Security">
-            
-        </p>
 <?php
 echo 'IP:';
 print_r($ip);
@@ -110,26 +99,63 @@ if(isset($_GET['Sec'])){
     }
 
     print '</table>';
-    echo "<input type=\"submit\" name=\"Go\" value=\"Go\">";
+
     // exec("ssh root@$ip apt-get -y upgrade 2>&1", $return );
     // var_dump($return);
 }
+if(isset($_GET['Go'])){
+	$secid = array();
+	$secid = (isset($_GET['sec-packages']))?$_GET['sec-packages']:$_GET['check-packages'];
+	print_r($secid);
+	$packages = array();
+	echo "<p>Your going to upgrade:</p>";
+	foreach ($secid as $secpack) {
+	$sqln = "SELECT package FROM packages where id = $secpack and servers = $id";
+	$resultu = $conn->query($sqln);
+	
+	while ($row = $resultu->fetch_assoc()) {
+		echo "Package:" . $row['package']; echo "<br/>";
+		$packages[] = $row['package'];
+		
+	} 
+	
+	}
+	//print_r($packages);
+	//print_r($row);
+	echo "<input type=\"Submit\" name=\"Yes\" value=\"Confirm\">";
+	echo "<input type=\"hidden\" name=packs value=\"".implode(" ", $packages)."\">";
 
-//if(isset($_GET['Go'])){
+}
 
-//$secpack = $_GET['sec-packages'];
-//$sqln = "SELECT package FROM packages where security = 1 AND servers = $id AND id = $secpack" ;
-//$results = $conn->query($sqln);
-//print_r($results);
-	// exec("ssh root@$ip 'export DEBIAN_FRONTEND=noninteractive; apt-get -y upgrade 2>&1'", $return );
-	// var_dump($return);
-//}
+ 	
+
+//	print_r($packages);
+
+	if(isset($_GET['Yes'])){
+		$packages = $_GET['packs'];
+		//$package = implode(" ", $packages);
+		print_r($packages);
+		exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install $packages'", $output);
+		echo implode('<br/>',$output);
+	}
+
+
 
 mysqli_close($conn);
 
 ?>
 
-
+        <p>
+            What would you like to upgrade?
+        </p>
+        <p>
+            <input type="hidden" name=id value="<?php echo $id?>">
+            <input type="hidden" name=ip value="<?php echo $ip?>">
+            <input type="hidden" name=servername value="<?php echo $servername?>">
+            <input type="submit" class="btn btn-default" name="Check" value="Updates">
+            <input type="submit" class="btn btn-default" name="Sec" value="Security">
+            <input type="Submit" class="btn btn-default" name="Go" value="Go">
+        </p>
     </form>
 <?php
     //Include a generic footer
