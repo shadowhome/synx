@@ -11,9 +11,13 @@ function _dbList($stringArray){
 
 function getOS($pass=false){
 	$ip = $_REQUEST['ip'];
+	$sshp = $_REQUEST['sshp'];
+	if(!isset($_REQUEST['sshp'])) {
+		$sshp = '22';
+	}
 	$lsbresult1   = array();
 	if (isset($pass) && $pass){
-		$connection = ssh2_connect($ip, 22);
+		$connection = ssh2_connect($ip, $sshp);
 		echo ssh2_auth_password($connection, 'root', $pass)?'success':'fail';
 		$cmd="lsb_release -as";
 		$stream = ssh2_exec($connection, $cmd);
@@ -24,8 +28,17 @@ function getOS($pass=false){
 	}
 	else {
 		$lsbresult1 = array();
-		exec("ssh sysad@$ip 'lsb_release -as'",$lsbresult1 );
+		$connection = ssh2_connect($ip, $sshp, array('hostkey', 'ssh-rsa'));
+		ssh2_auth_pubkey_file($connection, 'sysad','~/.ssh/id_rsa.pub', '~/.ssh/id_rsa');
+		$stream = ssh2_exec($connection, $cmd);
+		$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
+		stream_set_blocking($errorStream, true);
+		stream_set_blocking($stream, true);
+		$lsbresult1 = stream_get_contents($stream);
+		
 	}
+	
+		print_r($lsbresult1);
 		$lsbresult = explode("\n", $lsbresult1);
 		if(!empty($lsbresult)) {
 		$OS        = $lsbresult[0];
@@ -53,12 +66,19 @@ function sshiconn($cmd, $pass, $ip, $sshp=22){
 	$ip = $_REQUEST['ip'];
 	$pass = $_REQUEST['pass'];
 	$sshp = $_REQUEST['sshp'];
+	if(!isset($_REQUEST['sshp'])) {
+		$sshp = '22';
+	}
+	print_r($ip);
+	print_r($pass);
+	print_r($sshp);
 	$connection = ssh2_connect($ip, $sshp);
 	ssh2_auth_password($connection, 'root', $pass);
 	$stream = ssh2_exec($connection, $cmd);
 	$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
 	stream_set_blocking($errorStream, true);
 	stream_set_blocking($stream, true);
+	print_r($cmd);
 //	$response = '';
 //	while($buffer = fread($stream, 4096)) {
 //	$response .= $buffer;

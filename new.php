@@ -81,19 +81,23 @@ if ($_REQUEST['populate'] == 'yes') {
 
 	echo "Setting up non-privelged ssh user \"sysad\"";
 	$cmd="id -u syad; if [ $? = 1 ];then useradd -d /home/sysad -p saqrX1N3h1MQ6 -m sysad;fi; if [ ! -d /home/sysad/manage ];then mkdir -p /home/sysad/manage/;fi ";
+
+	
+
+	sshiconn($cmd, $pass, $ip, $sshp);
+	flush();
 	echo "Getting bash script needed to populate database and setting permissions";
-	$cmd2="wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh";
+	$cmd="wget https://raw.githubusercontent.com/shadowhome/synx/master/packs.sh -O /home/sysad/manage/packs.sh; chmod 700 /home/sysad/manage/packs.sh";
+	sshiconn($cmd, $pass, $ip, $sshp);
+	flush();
 	echo "Setting cronjobs and sudo access to perform upgrades when asked to";
-	$cmd3="su - sysad -c 'mkdir -p /home/sysad/.ssh; chmod 700 /home/sysad/.ssh; echo \"$sshpub\" > /home/sysad/.ssh/authorized_keys';echo \"10 1 * * * root /home/sysad/manage/packs.sh all\" >> /etc/crontab;echo \"sysad   ALL=(root)      NOPASSWD: /usr/bin/apt-get\" >> /etc/sudoers ";	
+	$cmd="su - sysad -c 'mkdir -p /home/sysad/.ssh; chmod 700 /home/sysad/.ssh; echo \"$sshpub\" > /home/sysad/.ssh/authorized_keys';echo \"10 1 * * * root /home/sysad/manage/packs.sh all\" >> /etc/crontab;echo \"sysad   ALL=(root)      NOPASSWD: /usr/bin/apt-get\" >> /etc/sudoers ";
+	sshiconn($cmd, $pass, $ip, $sshp);
+	flush();
+	
 	echo "Running populate which may take a while";
-	$cmd4="/home/sysad/manage/packs.sh all";
-	sshiconn($cmd, $pass, $ip);
-	flush();
-	sshiconn($cmd2, $pass, $ip);
-	flush();
-	sshiconn($cmd3, $pass, $ip);
-	flush();
-	sshiconn($cmd4, $pass, $ip);
+	$cmd="/home/sysad/manage/packs.sh all";
+	sshiconn($cmd, $pass, $ip, $sshp);
 	flush();
 	echo "If the above completed we're going to retrieve some data";
 	exec("ssh sysad@$ip \"echo 'SELECT package, cversion, oversion, md5, upgrade, security FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $packages);

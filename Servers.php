@@ -99,7 +99,7 @@ $result = $conn->query($servers);
 		$id = $_GET['id'];
 		$updatesOnly = (isset($_REQUEST['updates']) && $_REQUEST['updates']==='1');
 		$secOnly = (isset($_REQUEST['sec']) && $_REQUEST['sec']==='1');
-		$sql="SELECT  id, servername, ip, company, version, OS, description, releasever FROM servers WHERE id = '$id'";
+		$sql="SELECT  id, servername, ip, company, version, OS, description, releasever, sshp FROM servers WHERE id = '$id'";
 		$result=mysqli_query($conn, $sql);
 		$row=mysqli_fetch_array($result);
 		$packs="SELECT package, OS, version, upgrade, security, changelog, date, rc, ii, md5 from packages where servers = '$id' ".(($updatesOnly)?' AND upgrade="1"':'').(($secOnly)?' AND security="1"':'');
@@ -109,7 +109,8 @@ $result = $conn->query($servers);
 		$servername=$row['servername'];
 		$ip=$row['ip'];
 		$company=$row['company'];
-		$description=$row['description']; ?>
+		$description=$row['description'];
+		$sshp=$row['sshp']; ?>
 		
 		<a name="server<?php echo $row['id'];?>" style="text-decoration: none; color: black;">
 			<h1 style="text-align: center;">SERVER DETAILS</h1>
@@ -122,6 +123,7 @@ $result = $conn->query($servers);
 						<th scope="col">ID</th>
 						<th scope="col">Name</th>
 						<th scope="col">IP</th>
+						<th scope="col">SSH Port</th>
 						<th scope="col">Company</th>
 						<th scope="col">OS</th>
 						<th scope="col">Version</th>
@@ -134,6 +136,7 @@ $result = $conn->query($servers);
 						<td><?php echo $row["id"]; ?></td>
 						<td><?php echo $row["servername"]; ?></td>
 						<td><?php echo $row["ip"]; ?></td>
+						<td><?php echo $row["sshp"]; ?></td>
 						<td><?php echo $row["company"]; ?></td>
 						<td><?php echo $row["OS"]; ?></td>
 						<td><?php echo $row["version"]; ?></td>
@@ -176,6 +179,7 @@ $result = $conn->query($servers);
 					<input type="hidden" name=ip value="<?php echo $ip?>">
 					<input type="hidden" name=servername value="<?php echo $servername?>">
 					<input type="hidden" name=company value="<?php echo $company?>">
+					<input type="hidden" name=sshp value="<?php echo $sshp?>">
 					<input type="submit" class="btn btn-md btn-primary" name="Check" value="Check for updates">
 				</form>
 			</div>

@@ -2,7 +2,7 @@
 $menu = array(
 		'home'  => array('text'=>'Home',  'url'=>'index.php'),
 		'Servers'  => array('text'=>'Servers',  'url'=>'Servers.php'),
-		'Patches' => array('text'=>'Patches', 'url'=>'Packages.php'),
+		'Patches' => array('text'=>'Packages', 'url'=>'Packages.php'),
 );
 
 class CNavigation {

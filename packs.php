@@ -78,7 +78,7 @@ $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$
 	if (mysqli_query($conn, $sqlnew)&&mysqli_query($conn, $sql)) {
 
 		echo "New record created successfully";
-		header( "Location: Servers.php" );
+		header( "Location: Servers.php?id=$id" );
 	} else {
 		echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 	}
