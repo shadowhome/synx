@@ -16,7 +16,7 @@ if [ ! -d /home/sysad/manage/ ]; then
 fi
 
 if [ ! -f /home/sysad/manage/synx.db ]; then
-	STRUCTURE="CREATE TABLE Packages (package TEXT,date TEXT, time TEXT, rc INT, ii INT, upgrade INT, security INT, changelog TEXT, cversion TEXT, oversion TEXT,md5 TEXT);";
+	STRUCTURE="CREATE TABLE Packages (package TEXT,date TEXT, time TEXT, rc INT, ii INT, upgrade INT, security INT, changelog TEXT, cversion TEXT, nversion TEXT,md5 TEXT);";
 	echo $STRUCTURE |sqlite3 /home/sysad/manage/synx.db
 fi
 
@@ -27,8 +27,8 @@ check () {
 	apt-get upgrade -s|grep  ^Inst |awk '{print$2,$3,$4}' |sed s'/\[//'|sed s'/\]//'|sed s'/(//'| while read -r a ;do
                 pack=`echo $a|awk '{print$1}'`
                 cver=`echo $a|awk '{print$2}'`
-                over=`echo $a|awk '{print$3}'`
-                printf "UPDATE Packages SET upgrade = 1, cversion = '$cver', oversion = '$over' WHERE package = '$pack';"|sqlite3 $workdir/synx.db
+                nver=`echo $a|awk '{print$3}'`
+                printf "UPDATE Packages SET upgrade = 1, cversion = '$cver', nversion = '$nver' WHERE package = '$pack';"|sqlite3 $workdir/synx.db
         done
 
 #fi
@@ -55,8 +55,8 @@ security () {
 	apt-get upgrade -s|grep Debian-Security|grep ^Inst |awk '{print$2,$3,$4}' |sed s'/\[//'|sed s'/\]//'|sed s'/(//'| while read -r a ;do
 		pack=`echo $a|awk '{print$1}'`
 		cver=`echo $a|awk '{print$2}'`
-		over=`echo $a|awk '{print$3}'`
-		printf "UPDATE Packages SET security = 1, cversion = '$cver', oversion = '$over' WHERE package = '$pack';"|sqlite3 $workdir/synx.db
+		nver=`echo $a|awk '{print$3}'`
+		printf "UPDATE Packages SET security = 1, cversion = '$cver', nversion = '$nver' WHERE package = '$pack';"|sqlite3 $workdir/synx.db
 	done
 #fi
 }

@@ -100,13 +100,13 @@ if ($_REQUEST['populate'] == 'yes') {
 	sshiconn($cmd, $pass, $ip, $sshp);
 	flush();
 	echo "If the above completed we're going to retrieve some data";
-	exec("ssh sysad@$ip \"echo 'SELECT package, cversion, oversion, md5, upgrade, security FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $packages);
+	exec("ssh sysad@$ip \"echo 'SELECT package, cversion, nversion, md5, upgrade, security FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $packages);
 	$sql="INSERT INTO packages(package,servers,version,nversion, md5, upgrade, security, servername) VALUES ";
 	$sep = '';
 	
 	foreach ($packages as $md_s) {
-		list($pack, $cver, $over, $md5, $upgrade, $sec) = explode("|", $md_s);
-		$sql .= $sep."(\"$pack\", $id, \"$cver\", \"$over\", \"$md5\", \"$upgrade\", \"$sec\", \"$servername\")";
+		list($pack, $cver, $nver, $md5, $upgrade, $sec) = explode("|", $md_s);
+		$sql .= $sep."(\"$pack\", $id, \"$cver\", \"$nver\", \"$md5\", \"$upgrade\", \"$sec\", \"$servername\")";
 		$sep = ', ';
 	}
 	

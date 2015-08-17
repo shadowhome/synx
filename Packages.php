@@ -13,7 +13,6 @@ if (!$conn) {
 	die("Connection failed: " . mysqli_connect_error());
 }
 
-echo "Packages that are available to be updated";
 $sql = "SELECT id, package,version,nversion, servers, servername, upgrade, security from Packages where upgrade = 1";
 
 $result = $conn->query($sql);

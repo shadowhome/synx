@@ -23,7 +23,7 @@ list($OS, $version, $releasever) = getOS();
 
 $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$releasever' WHERE id = $id";
 
-	exec("ssh sysad@$ip \"echo 'SELECT package , oversion, security, upgrade, date, md5, cversion, rc, ii, changelog FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $lines);
+	exec("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, date, md5, cversion, rc, ii, changelog FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $lines);
 
 	$sql="REPLACE INTO packages (package, version, security, upgrade, servers, servername, date, md5, nversion, rc, ii, changelog) VALUES";	
 	$sep = '';
@@ -67,9 +67,9 @@ $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$
 			//print_r($md_s);
 			//echo '<br/><br/>';
 			
-		list($pack, $over,$security, $upgrade, $date, $md5, $cver, $rc, $ii, $cl) = $md_s;//explode("|", $md_s);
+		list($pack, $nver,$security, $upgrade, $date, $md5, $cver, $rc, $ii, $cl) = $md_s;//explode("|", $md_s);
 		
-		$sql .= $sep."(\"$pack\", \"$over\", \"$security\", \"$upgrade\", $id, \"$servername\" , \"$date\",  \"$md5\", \"$cver\", \"$rc\", \"$ii\", \"".mysqli_escape_string($conn, $cl)."\")";
+		$sql .= $sep."(\"$pack\", \"$cver\", \"$security\", \"$upgrade\", $id, \"$servername\" , \"$date\",  \"$md5\", \"$nver\", \"$rc\", \"$ii\", \"".mysqli_escape_string($conn, $cl)."\")";
 		$sep = ', ';
 		//}
 	}
