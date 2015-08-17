@@ -11,7 +11,7 @@ if (!$conn) {
 	die("Connection failed: " . mysqli_connect_error());
 }
 
-$sql = "SELECT id, package,version,nversion, servers, servername, upgrade, security from Packages where upgrade = 1";
+$sql = "SELECT id, package,version,nversion, servers, servername, upgrade, security from Packages where upgrade = 1 ORDER BY package";
 
 $result = $conn->query($sql);
 
@@ -94,10 +94,70 @@ $result = $conn->query($sql);
 			
 			print '</table>';
 			
-				$conn->close();
+//				$conn->close();
 			?>
 		</table>
 	</div>
+<?php 
+if(isset($_GET['Go'])){
+	$secid = array();
+	$secid = (isset($_GET['sec-packages']))?$_GET['sec-packages']:$_GET['check-packages'];
+	print_r($secid);
+	$packages = array();
+	echo "<p>Your going to upgrade:</p>";
+	foreach ($secid as $secpack) {
+		$sqln = "SELECT package FROM packages where id = $secpack and servers = $id";
+		$resultu = $conn->query($sqln);
+		while ($row = $resultu->fetch_assoc()) {
+			echo "Package:" . $row['package']; echo "<br/>";
+			$packages[] = $row['package'];
+
+		}
+	}
+	//	print_r($packages);
+	//print_r($row);
+	echo "<input type=\"Submit\" name=\"Yes\" value=\"Confirm\">";
+	echo "<input type=\"hidden\" name=packs value=\"".implode(" ", $packages)."\">";
+
+}
+if(isset($_GET['Yes'])){
+	$packages = $_GET['packs'];
+	//$package = implode(" ", $packages);
+	//		print_r($packages);
+	exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install $packages'", $output);
+	echo implode('<br/>',$output);
+	//		$packages = array();
+	$package = explode(" ", $packages);
+	//		print_r($package);
+
+	foreach ($package as $setu) {
+		//$setHist = "INSERT INTO PackagesHist (package,version,servers,servername,upgraded) VALUES ($setu,$version,$id,$servername,\"".date('Y-m-d')."\"";
+		$uphist = "insert into packageHist (package, version, servers, servername, upgraded) select packages.package, packages.version, servers.id, servers.servername, \"".date('Y-m-d')."\" from packages inner join servers on packages.servers = servers.id where packages.package in ('implode(',',$packages)')";
+		$listSetu = '"'.implode('","', $package).'"';
+		$changeu = "UPDATE Packages SET upgrade = 0, security = 0 WHERE package IN (".$listSetu.") AND servers = $id";
+		//print_r($changeu);
+		mysqli_query($conn, $changeu)&&mysqli_query($conn, $changes)&&mysqli_query($conn, $uphist);
+	}
+
+}
+
+mysqli_close($conn);
 
 
+?>
+    <p>What would you like to upgrade?</p>
+    <p>
+        <input type="hidden" name=id value="<?php echo $id?>">
+        <input type="hidden" name=ip value="<?php echo $ip?>">
+        <input type="hidden" name=servername value="<?php echo $servername?>">
+        <input type="submit" class="btn btn-default" name="Check" value="Updates">
+        <input type="submit" class="btn btn-default" name="Sec" value="Security">
+        <input type="Submit" class="btn btn-default" name="Go" value="Go">
+    </p>
+</form>
+</div>
+<?php
+    //Include a generic footer
+    include 'inc/html/footer.php';
+?>
 			
