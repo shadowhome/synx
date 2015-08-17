@@ -79,7 +79,7 @@ inst () {
 	printf 'DELETE FROM Packages;'|sqlite3 $workdir/synx.db
         find /var/lib/dpkg/info -name "*.list" -exec stat -c $'%n\t%y' {} \; |     sed -e 's,/var/lib/dpkg/info/,,' -e 's,\.list\t,\t,' |    sort -n |awk '{print$1, $2, $3}' |sed -e 's/.000000000//g'|sed "s/ /,/g"|sed "s/$/,,,,,,,,/" > $workdir/previous
 	printf ".separator , \n.import $workdir/previous Packages" |sqlite3 $workdir/synx.db
-	for a in `cat /home/sysa/manage/previous |awk -F, '{print$1}'` ; do
+	for a in `cat /home/sysad/manage/previous |awk -F, '{print$1}'` ; do
 		for b in `dpkg -l|grep -w $a |grep -v ^ii |awk '{print$2}'`;do
 		printf "UPDATE Packages SET rc = 1 WHERE package = '$b';"|sqlite3 $workdir/synx.db
 		done
