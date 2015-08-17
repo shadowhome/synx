@@ -19,7 +19,7 @@ $ip=$_GET['ip'];
 $servername = $_GET['servername'];
 $company = $_GET['company'];
 
-list($OS, $version, $releasever) = getOS();
+@list($OS, $version, $releasever) = getOS();
 
 $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$releasever' WHERE id = $id";
 

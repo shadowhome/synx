@@ -65,7 +65,7 @@ if(isset($_GET['Check'])){
     print '<td>Package</td>'.PHP_EOL;
     print '</tr>'.PHP_EOL;
 
-    $sql = "SELECT package, id FROM packages where upgrade = 1 AND servers = $id";
+    $sql = "SELECT package, id, version, nversion FROM packages where upgrade = 1 AND servers = $id";
     $results = $conn->query($sql);
 
     while($row = $results->fetch_array()) {
@@ -73,10 +73,13 @@ if(isset($_GET['Check'])){
         print '<tr>';
         print '<td><input type="checkbox" name="check-packages[]" value="'.$row['id'].'" class="check-packages" /></td>';
         print '<td>'.$row["package"].'</td>';
+        print '<td>'.$row["version"].'</td>';
+        print '<td>'.$row["nversion"].'</td>';
         print '</tr>'.PHP_EOL;
     }
 
     print '</table>';
+//    $version = $row['version'];
     
     // exec("ssh root@$ip apt-get -y upgrade 2>&1", $return );
     // var_dump($return);
@@ -121,7 +124,7 @@ if(isset($_GET['Go'])){
     		
     	} 
 	}
-	//print_r($packages);
+//	print_r($packages);
 	//print_r($row);
 	echo "<input type=\"Submit\" name=\"Yes\" value=\"Confirm\">";
 	echo "<input type=\"hidden\" name=packs value=\"".implode(" ", $packages)."\">";
@@ -133,9 +136,21 @@ if(isset($_GET['Go'])){
 	if(isset($_GET['Yes'])){
 		$packages = $_GET['packs'];
 		//$package = implode(" ", $packages);
-		print_r($packages);
+//		print_r($packages);
 		exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install $packages'", $output);
 		echo implode('<br/>',$output);
+//		$packages = array();
+		$package = explode(" ", $packages);
+//		print_r($package);
+		
+		foreach ($package as $setu) {
+			//$setHist = "INSERT INTO PackagesHist (package,version,servers,servername,upgraded) VALUES ($setu,$version,$id,$servername,\"".date('Y-m-d')."\"";
+			$changeu = "UPDATE Packages SET upgrade = 0 WHERE package = \"$setu\" AND servers = $id";
+			$changes = "UPDATE Packages SET security = 0 WHERE package = \"$setu\" AND servers = $id";
+			print_r($changeu);
+			mysqli_query($conn, $changeu)&&mysqli_query($conn, $changes);
+		}
+		
 	}
 
 mysqli_close($conn);
