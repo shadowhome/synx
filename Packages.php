@@ -4,8 +4,6 @@
 	include 'inc/upconfig.php';
 
 
-// NOT USED
-
 // Create connection
 $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 // Check connection
