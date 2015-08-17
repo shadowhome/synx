@@ -145,10 +145,11 @@ if(isset($_GET['Go'])){
 		
 		foreach ($package as $setu) {
 			//$setHist = "INSERT INTO PackagesHist (package,version,servers,servername,upgraded) VALUES ($setu,$version,$id,$servername,\"".date('Y-m-d')."\"";
-			$changeu = "UPDATE Packages SET upgrade = 0 WHERE package = \"$setu\" AND servers = $id";
-			$changes = "UPDATE Packages SET security = 0 WHERE package = \"$setu\" AND servers = $id";
-			print_r($changeu);
-			mysqli_query($conn, $changeu)&&mysqli_query($conn, $changes);
+			$uphist = "insert into packageHist (package, version, servers, servername, upgraded) select packages.package, packages.version, servers.id, servers.name, \"".date('Y-m-d')."\" from packages inner join servers on packages.server = servers.id where packages.package in ('explode(',',$packages)')";
+			$listSetu = '"'.implode('","', $package).'"';
+			$changeu = "UPDATE Packages SET upgrade = 0, security = 0 WHERE package IN (".$listSetu.") AND servers = $id";		
+			//print_r($changeu);
+			mysqli_query($conn, $changeu)&&mysqli_query($conn, $changes)&&mysqli_query($conn, $uphist);
 		}
 		
 	}
