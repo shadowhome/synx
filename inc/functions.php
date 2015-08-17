@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL);
 
 function getBetween($content,$start,$end){
 	echo $content;

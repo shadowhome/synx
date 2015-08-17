@@ -72,21 +72,24 @@ $result = $conn->query($sql);
 			<?php
 			
 			
-			print '<table border="1">'.PHP_EOL;
-			print '<tr>';
-			print '<td><input type="checkbox" data-package="sec-packages" class="select-all" /></td>';
-			print '<td>Package</td>'.PHP_EOL;
-			print '</tr>'.PHP_EOL;
-			
-	//		$sql = "SELECT package, id FROM packages where security = 1 AND servers = $id";
-			$results = $conn->query($sql);
-			
-			while($row = $results->fetch_array()) {
-			
-				print '<tr>';
-				print '<td><input type="checkbox" name="sec-packages[]" value="'.$row['id'].'" class="sec-packages" /></td>';
-				print '<td>'.$row["package"].'</td>';
-				print '</tr>'.PHP_EOL;
+    print '<table border="1">'.PHP_EOL;
+    print '<tr>';
+    print '<td><input type="checkbox" data-package="check-packages" class="select-all" /></td>';
+    print '<td>Package</td>'.PHP_EOL;
+    print '</tr>'.PHP_EOL;
+
+ //   $sql = "SELECT package, id, version, nversion FROM packages where upgrade = 1 AND servers = $id";
+    $results = $conn->query($sql);
+
+    while($row = $results->fetch_array()) {
+
+        print '<tr>';
+        print '<td><input type="checkbox" name="check-packages[]" value="'.$row['id'].'" class="check-packages" /></td>';
+        print '<td>'.$row["package"].'</td>';
+        print '<td>'.$row["version"].'</td>';
+        print '<td>'.$row["nversion"].'</td>';
+        print '<td>'.$row["servername"].'</td>';
+        print '</tr>'.PHP_EOL;
 			}
 			
 			print '</table>';

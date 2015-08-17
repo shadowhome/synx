@@ -24,7 +24,7 @@ fi
 #if [ $1 == "check" ];then
 check () {
 	apt-get update
-	apt-get upgrade -s|grep  ^Inst |awk '{print$2,$3,$4}' |sed s'/\[//'|sed s'/\]//'|sed s'/(//'| while read -r a ;do
+	apt-get upgrade --just-print|grep  ^Inst |awk '{print$2,$3,$4}' |sed s'/\[//'|sed s'/\]//'|sed s'/(//'| while read -r a ;do
                 pack=`echo $a|awk '{print$1}'`
                 cver=`echo $a|awk '{print$2}'`
                 nver=`echo $a|awk '{print$3}'`
