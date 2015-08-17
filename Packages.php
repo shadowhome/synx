@@ -16,6 +16,22 @@ $sql = "SELECT id, package,version,nversion, servers, servername, upgrade, secur
 $result = $conn->query($sql);
 
 ?>
+    <script type="text/javascript">
+    jQuery(document).ready(function() {
+        jQuery('.select-all').click(function(event) {  //on click
+            var strPackage = jQuery(this).data('package');
+            if(jQuery(this).prop('checked')) { // check select status
+                jQuery('.' + strPackage).each(function() { //loop through each checkbox
+                    jQuery(this).prop('checked', true);  //select all checkboxes with class "checkbox"
+                });
+            } else {
+                jQuery('.' + strPackage).each(function() { //loop through each checkbox
+                    jQuery(this).prop('checked', false); //deselect all checkboxes with class "checkbox"                      
+                });
+            }
+        });
+    });
+    </script>
 <div class="container">
 	<div class="page-header">
 		<h1 style="text-align: center;">Package Manager</h1>
@@ -54,6 +70,27 @@ $result = $conn->query($sql);
 			?>
 			</tbody>
 			<?php
+			
+			
+			print '<table border="1">'.PHP_EOL;
+			print '<tr>';
+			print '<td><input type="checkbox" data-package="sec-packages" class="select-all" /></td>';
+			print '<td>Package</td>'.PHP_EOL;
+			print '</tr>'.PHP_EOL;
+			
+	//		$sql = "SELECT package, id FROM packages where security = 1 AND servers = $id";
+			$results = $conn->query($sql);
+			
+			while($row = $results->fetch_array()) {
+			
+				print '<tr>';
+				print '<td><input type="checkbox" name="sec-packages[]" value="'.$row['id'].'" class="sec-packages" /></td>';
+				print '<td>'.$row["package"].'</td>';
+				print '</tr>'.PHP_EOL;
+			}
+			
+			print '</table>';
+			
 				$conn->close();
 			?>
 		</table>
