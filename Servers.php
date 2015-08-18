@@ -96,21 +96,39 @@ $result = $conn->query($servers);
 		die("Connection failed: " . mysqli_connect_error());
 	}
 	if(isset($_GET['id'])) {
-		$id = $_GET['id'];
-		$updatesOnly = (isset($_REQUEST['updates']) && $_REQUEST['updates']==='1');
-		$secOnly = (isset($_REQUEST['sec']) && $_REQUEST['sec']==='1');
-		$sql="SELECT  id, servername, ip, company, version, OS, description, releasever, sshp FROM servers WHERE id = '$id'";
-		$result=mysqli_query($conn, $sql);
-		$row=mysqli_fetch_array($result);
-		$packs="SELECT package, OS, version, upgrade, security, changelog, date, rc, ii, md5 from packages where servers = '$id' ".(($updatesOnly)?' AND upgrade="1"':'').(($secOnly)?' AND security="1"':'');
+		$id          = $_GET['id'];
+
+		$updatesOnly = true;
+		$secOnly     = false;
+
+		if (isset($_REQUEST['sec']) && $_REQUEST['sec'] === '1') {
+			$secOnly     = true;
+		}
+
+		if (isset($_REQUEST['updates']) && $_REQUEST['updates'] !== '1') {
+			$updatesOnly = false;
+		}
+
+		$sql = "SELECT  id, servername, ip, company, version, OS, description, releasever, sshp ".
+			   "FROM servers WHERE id = '$id'";
+
+		$result = mysqli_query($conn, $sql);
+		$row    = mysqli_fetch_array($result);
+
+		$packs  = "SELECT package, OS, version, upgrade, security, changelog, date, rc, ii, md5 ".
+				  "FROM packages ".
+				  "WHERE ".
+					"servers = '$id' ".
+					(($updatesOnly)?' AND upgrade="1"':'').
+					(($secOnly)?' AND security="1"':'');
 		
-		$resultp=mysqli_query($conn, $packs);
-		$id=$row['id'];
-		$servername=$row['servername'];
-		$ip=$row['ip'];
-		$company=$row['company'];
-		$description=$row['description'];
-		$sshp=$row['sshp']; ?>
+		$resultp     = mysqli_query($conn, $packs);
+		$id          = $row['id'];
+		$servername  = $row['servername'];
+		$ip          = $row['ip'];
+		$company     = $row['company'];
+		$description = $row['description'];
+		$sshp        = $row['sshp']; ?>
 		
 		<a name="server<?php echo $row['id'];?>" style="text-decoration: none; color: black;">
 			<h1 style="text-align: center;">SERVER DETAILS</h1>
@@ -192,7 +210,8 @@ $result = $conn->query($servers);
 			</div>
 			<div class="col-md-2" style="margin-bottom: 20px;">
 				<form action="Servers.php" method='get'>
-					<input type="hidden" name=id value="<?php echo $id?>">
+					<input type="hidden" name=id value="<?php echo $id?>" />
+					<input type="hidden" name="updates" value="0" />
 					<input type="submit" class="btn btn-md btn-info" name="Check" value="Show All">
 				</form>
 			</div>
