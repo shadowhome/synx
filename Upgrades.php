@@ -106,9 +106,8 @@ if(isset($_GET['Sec'])){
     }
 
     print '</table>';
+ 
 
-    // exec("ssh root@$ip apt-get -y upgrade 2>&1", $return );
-    // var_dump($return);
 }
 if(isset($_GET['Go'])){
 	$secid = array();

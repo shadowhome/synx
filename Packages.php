@@ -11,7 +11,14 @@ if (!$conn) {
 	die("Connection failed: " . mysqli_connect_error());
 }
 
-$sql = "SELECT id, package,version,nversion, servers, servername, upgrade, security from Packages where upgrade = 1 ORDER BY package";
+$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM packages where upgrade = 1";
+
+if (isset($_GET['Sec'])) {
+	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM packages where security = 1";
+	}
+elseif(isset($_GET['Check'])) {
+	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM packages where upgrade = 1";
+	}
 
 $result = $conn->query($sql);
 
@@ -41,6 +48,8 @@ $result = $conn->query($sql);
 		<table class="table table-striped">
 			<thead>
 				<tr>
+				
+					<th scope="col"><input type="checkbox" data-package="check-packages" class="select-all" /></th>
 					<th scope="col">ID</th>
 					<th scope="col">Package</th>
 					<th scope="col">ServerName</th>
@@ -51,10 +60,12 @@ $result = $conn->query($sql);
 				</tr>
 			</thead>
 			<tbody>
-						<?php
-			if ($result->num_rows > 0) { ?>
-				<?php while($row = $result->fetch_assoc()) { ?>
+			<?php
+			if ($result->num_rows > 0) { 
+				
+				 while($row = $result->fetch_assoc()) { ?>
 					<tr>
+						<td><input type="checkbox" name="check-packages[]" value="<?php echo $row['id'];?>" class="check-packages" form="packages"/></td>
 						<td><?php echo $row["id"]; ?></td>
 						<td><?php echo $row["package"]; ?></td>
 						<td><?php echo $row["servername"]; ?></td>
@@ -70,43 +81,20 @@ $result = $conn->query($sql);
 			?>
 			</tbody>
 			<?php
-			
-			
-    print '<table border="1">'.PHP_EOL;
-    print '<tr>';
-    print '<td><input type="checkbox" data-package="check-packages" class="select-all" /></td>';
-    print '<td>Package</td>'.PHP_EOL;
-    print '</tr>'.PHP_EOL;
-
- //   $sql = "SELECT package, id, version, nversion FROM packages where upgrade = 1 AND servers = $id";
-    $results = $conn->query($sql);
-
-    while($row = $results->fetch_array()) {
-
-        print '<tr>';
-        print '<td><input type="checkbox" name="check-packages[]" value="'.$row['id'].'" class="check-packages" /></td>';
-        print '<td>'.$row["package"].'</td>';
-        print '<td>'.$row["version"].'</td>';
-        print '<td>'.$row["nversion"].'</td>';
-        print '<td>'.$row["servername"].'</td>';
-        print '</tr>'.PHP_EOL;
-			}
-			
-			print '</table>';
-			
-//				$conn->close();
 			?>
 		</table>
 	</div>
 <?php 
+
+
 if(isset($_GET['Go'])){
 	$secid = array();
 	$secid = (isset($_GET['sec-packages']))?$_GET['sec-packages']:$_GET['check-packages'];
-	print_r($secid);
+	//print_r($secid);
 	$packages = array();
 	echo "<p>Your going to upgrade:</p>";
 	foreach ($secid as $secpack) {
-		$sqln = "SELECT package FROM packages where id = $secpack and servers = $id";
+		$sqln = "SELECT package FROM packages where id = $secpack";
 		$resultu = $conn->query($sqln);
 		while ($row = $resultu->fetch_assoc()) {
 			echo "Package:" . $row['package']; echo "<br/>";
@@ -145,7 +133,7 @@ mysqli_close($conn);
 
 
 ?>
-<form action='Packages.php' method='get'>
+<form id="packages" action='Packages.php' method='get'>
     <p>What would you like to upgrade?</p>
     <p>
 
