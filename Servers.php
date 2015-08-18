@@ -306,5 +306,3 @@ $result = $conn->query($servers);
 <?php
 	//Include a generic footer
 	include 'inc/html/footer.php';
-?>
-  
