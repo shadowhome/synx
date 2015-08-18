@@ -133,27 +133,18 @@ if(isset($_GET['Go'])){
 }
 
  
-//	print_r($packages);
-	if(isset($_GET['Yes'])){
-		$packages = $_GET['packs'];
-		//$package = implode(" ", $packages);
-//		print_r($packages);
-		exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install $packages'", $output);
-		echo implode('<br/>',$output);
-//		$packages = array();
-		$package = explode(" ", $packages);
-//		print_r($package);
-		
-		foreach ($package as $setu) {
-			//$setHist = "INSERT INTO PackagesHist (package,version,servers,servername,upgraded) VALUES ($setu,$version,$id,$servername,\"".date('Y-m-d')."\"";
-			$uphist = "insert into packageHist (package, version, servers, servername, upgraded) select packages.package, packages.version, servers.id, servers.servername, \"".date('Y-m-d')."\" from packages inner join servers on packages.servers = servers.id where packages.package in ('implode(',',$packages)')";
-			$listSetu = '"'.implode('","', $package).'"';
-			$changeu = "UPDATE Packages SET upgrade = 0, security = 0 WHERE package IN (".$listSetu.") AND servers = $id";		
-			//print_r($changeu);
-			mysqli_query($conn, $changeu)&&mysqli_query($conn, $changes)&&mysqli_query($conn, $uphist);
-		}
-		
-	}
+if (isset($_GET['Yes'])) {
+	
+	$packages = $_GET['packs'];
+	
+	exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install $packages'", $output);
+	echo implode('<br/>',$output);
+	$package = explode(" ", $packages);
+
+	$listSet = '"'.implode('","', $package).'"';
+	$changes = "UPDATE Packages SET upgrade = 0, security = 0 WHERE package IN (".$listSet.") AND servers = $id";
+	mysqli_query($conn, $changes);
+}
 
 mysqli_close($conn);
 
