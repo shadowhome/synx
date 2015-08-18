@@ -65,7 +65,7 @@ if(isset($_GET['Check'])){
     print '<td>Package</td>'.PHP_EOL;
     print '</tr>'.PHP_EOL;
 
-    $sql = "SELECT package, id, version, nversion FROM packages where upgrade = 1 AND servers = $id";
+    $sql = "SELECT package, id, version, nversion,servername FROM packages where upgrade = 1";
     $results = $conn->query($sql);
 
     while($row = $results->fetch_array()) {
@@ -75,6 +75,7 @@ if(isset($_GET['Check'])){
         print '<td>'.$row["package"].'</td>';
         print '<td>'.$row["version"].'</td>';
         print '<td>'.$row["nversion"].'</td>';
+        print '<td>'.$row["servername"].'</td>';
         print '</tr>'.PHP_EOL;
     }
 
@@ -93,7 +94,7 @@ if(isset($_GET['Sec'])){
     print '<td>Package</td>'.PHP_EOL;
     print '</tr>'.PHP_EOL;
 	
-    $sql = "SELECT package, id FROM packages where security = 1 AND servers = $id";
+    $sql = "SELECT package, id, version, nversion,servername FROM packages where security = 1";
     $results = $conn->query($sql);
     
     while($row = $results->fetch_array()) {

@@ -2,7 +2,7 @@
 	//Include a generic header
 	include 'inc/html/header.php';
 	include 'inc/upconfig.php';
-
+ini_set('error_reporting', E_ALL);
 
 // Create connection
 $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
@@ -145,11 +145,12 @@ mysqli_close($conn);
 
 
 ?>
+<form action='Packages.php' method='get'>
     <p>What would you like to upgrade?</p>
     <p>
-        <input type="hidden" name=id value="<?php echo $id?>">
-        <input type="hidden" name=ip value="<?php echo $ip?>">
-        <input type="hidden" name=servername value="<?php echo $servername?>">
+
+ 
+
         <input type="submit" class="btn btn-default" name="Check" value="Updates">
         <input type="submit" class="btn btn-default" name="Sec" value="Security">
         <input type="Submit" class="btn btn-default" name="Go" value="Go">

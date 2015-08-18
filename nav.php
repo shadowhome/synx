@@ -1,4 +1,5 @@
 <?php
+ini_set('error_reporting', E_ALL);
 $menu = array(
 		'home'  => array('text'=>'Home',  'url'=>'index.php'),
 		'Servers'  => array('text'=>'Servers',  'url'=>'Servers.php'),
@@ -7,6 +8,7 @@ $menu = array(
 
 class CNavigation {
   public static function GenerateMenu($items) {
+  	$html = ".";
     $html .= '<nav class="navbar navbar-inverse">';
       $html .= '<div class="container-fluid">';
         $html .= '<div class="navbar-header">';
