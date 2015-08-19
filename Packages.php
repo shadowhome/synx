@@ -70,7 +70,13 @@ $result = $conn->query($sql);
 						<td><?php echo $row["id"]; ?></td>
 						<td><?php echo $row["package"]; ?></td>
 						<td><?php echo $row["servername"]; ?></td>
-						<td><?php echo $row["upgrade"]?'<span class="glyphicon glyphicon-ok">&nbsp;</span>':''; ?></td>
+					<!-- 	<td><?php echo $row["upgrade"]?'<span class="glyphicon glyphicon-ok">&nbsp;</span>':''; ?></td> -->
+						<td><?php if ($row["upgrade"]==1) {
+				 				echo '<span class="glyphicon glyphicon-ok">&nbsp;</span>';
+						}
+							else {
+								echo '<span class="glyphicon glyphicon-remove"></span>';
+							}?></td>
 						<td><?php echo $row["security"]; ?></td>
 						<td><?php echo $row["version"]; ?></td>
 						<td><?php echo $row["nversion"]; ?></td>
@@ -149,7 +155,7 @@ if(isset($_GET['Yes'])){
 				//print_r("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install ".implode(' ', $package)."'");
 				echo nl2br($output);
 				$res = (strripos($output,'100') !== strlen($output)-3);
-				echo "ResultCode: $res";
+				
 
 				$uphist = "insert into packageHist (package, version, servers, servername, upgraded) select packages.package, packages.version, servers.id, servers.servername, \"".date('Y-m-d')."\" from packages inner join servers on packages.servers = servers.id WHERE packages.id IN (".implode(',',$p_ids).")";
 				$changeu = "UPDATE Packages SET upgrade = 0, security = 0 WHERE id IN (".implode(',',$p_ids).")";
