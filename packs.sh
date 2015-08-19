@@ -16,12 +16,22 @@ if [ ! -d /home/sysad/manage/ ]; then
 fi
 
 if [ ! -f /home/sysad/manage/synx.db ]; then
-	STRUCTURE="CREATE TABLE Packages (package TEXT,date TEXT, time TEXT, rc INT, ii INT, upgrade INT, security INT, changelog TEXT, cversion TEXT, nversion TEXT,md5 TEXT);";
+	STRUCTURE="CREATE TABLE Packages (package TEXT,date TEXT, time TEXT, rc INT, ii INT, upgrade INT, security INT, changelog TEXT, cversion TEXT, nversion TEXT,md5 TEXT,cpua TEXT, cpu TEXT,cput TEXT, cpuc TEXT, cpuf TEXT);";
 	echo $STRUCTURE |sqlite3 /home/sysad/manage/synx.db
 fi
 
 #Perform checks of all available packages for upgrade
 #if [ $1 == "check" ];then
+hwstats () {
+	cpu=`lscpu |grep -E 'Architecture|CPU\(s\)|Thread|Core|CPU MHz' |awk '{print$2}'`
+	arch=`echo $cpu|awk '{print$1}'`
+	cpun=`echo $cpu|awk '{print$2}'`
+	cput=`echo $cpu|awk '{print$3}'`
+	cpuc=`echo $cpu|awk '{print$4}'`
+	cpuf=`echo $cpu|awk '{print$5}'`
+	mem=`free -m |grep Mem|awk '{print$2}'`
+	printf "UPDATE Packages SET cpua = '$arch', cpu = '$cpun', cput = '$cput', cpuc = '$cpuc', cpuf = '$cpuf';"|sqlite3 $workdir/synx.db
+}
 check () {
 	apt-get update
 	apt-get upgrade --just-print|grep  ^Inst |awk '{print$2,$3,$4}' |sed s'/\[//'|sed s'/\]//'|sed s'/(//'| while read -r a ;do
