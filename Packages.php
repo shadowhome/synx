@@ -2,6 +2,7 @@
 	//Include a generic header
 	include 'inc/html/header.php';
 	include 'inc/upconfig.php';
+	include 'inc/functions.php';
 ini_set('error_reporting', E_ALL);
 
 // Create connection
@@ -69,7 +70,7 @@ $result = $conn->query($sql);
 						<td><?php echo $row["id"]; ?></td>
 						<td><?php echo $row["package"]; ?></td>
 						<td><?php echo $row["servername"]; ?></td>
-						<td><?php echo $row["upgrade"]; ?></td>
+						<td><?php echo $row["upgrade"]?'<span class="glyphicon glyphicon-ok">&nbsp;</span>':''; ?></td>
 						<td><?php echo $row["security"]; ?></td>
 						<td><?php echo $row["version"]; ?></td>
 						<td><?php echo $row["nversion"]; ?></td>
@@ -103,8 +104,8 @@ if(isset($_GET['Go'])){
 		
 		
 		//$sqln = "SELECT packages, servers.ip FROM packages INNER JOIN servers ON packages.servers = servers.id WHERE servers.servername = \"$servername\" AND packages.id = \"$secpack\"";
-		$sqln = "SELECT package, servers.ip, packages.id FROM packages INNER JOIN servers ON packages.servers = servers.id WHERE packages.id = \"$secpack\"";
-		print_r($sqln);
+		$sqln = "SELECT package, servers.ip, servers.sshp, packages.id FROM packages INNER JOIN servers ON packages.servers = servers.id WHERE packages.id = \"$secpack\"";
+//		print_r($sqln);
 		$resultu = $conn->query($sqln);
 		while ($row = $resultu->fetch_assoc()) {
 			echo "Package:" . $row['package']; echo "<br/>";
@@ -123,7 +124,7 @@ if(isset($_GET['Go'])){
 	//print_r($row);
 	echo "<input type=\"Submit\" name=\"Yes\" value=\"Confirm\" form=\"packages\">";
 	echo "<input type=\"hidden\" name=packs form=\"packages\" value='".json_encode($package_id_array)."'>";
-	print_r($package_id_array);
+//	print_r($package_id_array);
 
 }
 if(isset($_GET['Yes'])){
@@ -133,19 +134,29 @@ if(isset($_GET['Yes'])){
 			//print_r($packages);
 			
 			foreach ($packages as $ip=>$package_ids){
+				$sshp = "22";
 				$package = array();
 				$p_ids = array();
 				foreach($package_ids as $package_id){
 					$package[] = $package_id['package'];
 					$p_ids[] = $package_id['id'];
+					$sshp = $package_id['sshp'];
 				}
-				exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install ".implode(' ', $package)."'", $output);
+				$cmd = "export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install ".implode(' ', $package)."; echo $?";
+				$output = trim(sshsysad($cmd, $ip, $sshp));
+				flush();
+				//exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install ".implode(' ', $package)."'", $output);
 				//print_r("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install ".implode(' ', $package)."'");
-				echo implode('<br/>',$output);
+				echo nl2br($output);
+				$res = (strripos($output,'100') !== strlen($output)-3);
+				echo "ResultCode: $res";
 
 				$uphist = "insert into packageHist (package, version, servers, servername, upgraded) select packages.package, packages.version, servers.id, servers.servername, \"".date('Y-m-d')."\" from packages inner join servers on packages.servers = servers.id WHERE packages.id IN (".implode(',',$p_ids).")";
 				$changeu = "UPDATE Packages SET upgrade = 0, security = 0 WHERE id IN (".implode(',',$p_ids).")";
+				if($res){
 				mysqli_query($conn, $changeu)&&mysqli_query($conn, $uphist);
+				echo "Some manual intervention is required, please email wilhelm@fontera.com for a fix";
+				}
 				
 			}
 

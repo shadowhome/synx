@@ -54,11 +54,10 @@ function getOS($pass=false){
 }
 function getPACKS(){
 	$ip = $_GET['ip'];
-	//get some dates
+
 	$installed = array();
 	exec("ssh root@$ip '/home/sysad/manage/packs.sh inst'",$installed);
-	//print_r("ssh root@$ip '/home/sysadmin/bin/packs.sh inst'");
-	//print_r($installed);
+
 	return array($installed);
 
 }
@@ -70,9 +69,7 @@ function sshiconn($cmd, $pass, $ip, $sshp=22){
 	if(!isset($_REQUEST['sshp'])) {
 		$sshp = '22';
 	}
-	print_r($ip);
-	print_r($pass);
-	print_r($sshp);
+
 	$connection = ssh2_connect($ip, $sshp);
 	ssh2_auth_password($connection, 'root', $pass);
 	$stream = ssh2_exec($connection, $cmd);
@@ -80,17 +77,29 @@ function sshiconn($cmd, $pass, $ip, $sshp=22){
 	stream_set_blocking($errorStream, true);
 	stream_set_blocking($stream, true);
 	print_r($cmd);
-//	$response = '';
-//	while($buffer = fread($stream, 4096)) {
-//	$response .= $buffer;
-//	}
+
 	
-	return stream_get_contents($stream);
+	$output = stream_get_contents($stream);
 	fclose($stream);
 	fclose($errorStream);
 	ssh2_exec($connection, 'exit');
 	unset($connection);
-//	echo $response;
+	return $output;
+
+}
+function sshsysad($cmd, $ip, $sshp=22){
+	$connection = ssh2_connect($ip, $sshp, array('hostkey', 'ssh-rsa'));
+	ssh2_auth_pubkey_file($connection, 'sysad','~/.ssh/id_rsa.pub', '~/.ssh/id_rsa');
+	$stream = ssh2_exec($connection, $cmd, true);
+	$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
+	stream_set_blocking($errorStream, true);
+	stream_set_blocking($stream, true);
+	$output = stream_get_contents($stream);
+	fclose($stream);
+	fclose($errorStream);
+	ssh2_exec($connection, 'exit');
+	unset($connection);
+	return $output;
 }
 
 ?>
