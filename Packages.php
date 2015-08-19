@@ -74,7 +74,9 @@ $result = $conn->query($sql);
 						<td><?php echo $row["version"]; ?></td>
 						<td><?php echo $row["nversion"]; ?></td>
 					</tr>
-				<?php } ?>
+				<?php 
+				
+				 } ?>
 			<?php } else {
 					echo "<tr>0 results</tr>";
 				}
@@ -86,46 +88,66 @@ $result = $conn->query($sql);
 	</div>
 <?php 
 
+$package_id_array = array();
 
 if(isset($_GET['Go'])){
 	$secid = array();
 	$secid = (isset($_GET['sec-packages']))?$_GET['sec-packages']:$_GET['check-packages'];
 	//print_r($secid);
 	$packages = array();
+	$ip = array();
+	$id = array();
 	echo "<p>Your going to upgrade:</p>";
 	foreach ($secid as $secpack) {
-		$sqln = "SELECT package FROM packages where id = $secpack";
+		//$sqln = "SELECT package, servers FROM packages where id = $secpack UNION SELECT ip from servers WHERE servername = $servername";
+		
+		
+		//$sqln = "SELECT packages, servers.ip FROM packages INNER JOIN servers ON packages.servers = servers.id WHERE servers.servername = \"$servername\" AND packages.id = \"$secpack\"";
+		$sqln = "SELECT package, servers.ip, packages.id FROM packages INNER JOIN servers ON packages.servers = servers.id WHERE packages.id = \"$secpack\"";
+		print_r($sqln);
 		$resultu = $conn->query($sqln);
 		while ($row = $resultu->fetch_assoc()) {
 			echo "Package:" . $row['package']; echo "<br/>";
+			echo "IP:" . $row['ip']; echo "<br/>";
 			$packages[] = $row['package'];
+			$ip[] = $row['ip'];
+			$id[] = $row['id'];
+			if(!isset($package_id_array[$row['ip']])){
+				$package_id_array[$row['ip']] = array();
+			}
+			$package_id_array[$row['ip']][] = $row;
 
 		}
 	}
 	//	print_r($packages);
 	//print_r($row);
-	echo "<input type=\"Submit\" name=\"Yes\" value=\"Confirm\">";
-	echo "<input type=\"hidden\" name=packs value=\"".implode(" ", $packages)."\">";
+	echo "<input type=\"Submit\" name=\"Yes\" value=\"Confirm\" form=\"packages\">";
+	echo "<input type=\"hidden\" name=packs form=\"packages\" value='".json_encode($package_id_array)."'>";
+	print_r($package_id_array);
 
 }
 if(isset($_GET['Yes'])){
-	$packages = $_GET['packs'];
-	//$package = implode(" ", $packages);
-	//		print_r($packages);
-	exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install $packages'", $output);
-	echo implode('<br/>',$output);
-	//		$packages = array();
-	$package = explode(" ", $packages);
-	//		print_r($package);
+	$packages = json_decode($_GET['packs'],true);
+	
+			echo 'Response:';
+			//print_r($packages);
+			
+			foreach ($packages as $ip=>$package_ids){
+				$package = array();
+				$p_ids = array();
+				foreach($package_ids as $package_id){
+					$package[] = $package_id['package'];
+					$p_ids[] = $package_id['id'];
+				}
+				exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install ".implode(' ', $package)."'", $output);
+				//print_r("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install ".implode(' ', $package)."'");
+				echo implode('<br/>',$output);
 
-	foreach ($package as $setu) {
-		//$setHist = "INSERT INTO PackagesHist (package,version,servers,servername,upgraded) VALUES ($setu,$version,$id,$servername,\"".date('Y-m-d')."\"";
-		$uphist = "insert into packageHist (package, version, servers, servername, upgraded) select packages.package, packages.version, servers.id, servers.servername, \"".date('Y-m-d')."\" from packages inner join servers on packages.servers = servers.id where packages.package in ('implode(',',$packages)')";
-		$listSetu = '"'.implode('","', $package).'"';
-		$changeu = "UPDATE Packages SET upgrade = 0, security = 0 WHERE package IN (".$listSetu.") AND servers = $id";
-		//print_r($changeu);
-		mysqli_query($conn, $changeu)&&mysqli_query($conn, $changes)&&mysqli_query($conn, $uphist);
-	}
+				$uphist = "insert into packageHist (package, version, servers, servername, upgraded) select packages.package, packages.version, servers.id, servers.servername, \"".date('Y-m-d')."\" from packages inner join servers on packages.servers = servers.id WHERE packages.id IN (".implode(',',$p_ids).")";
+				$changeu = "UPDATE Packages SET upgrade = 0, security = 0 WHERE id IN (".implode(',',$p_ids).")";
+				mysqli_query($conn, $changeu)&&mysqli_query($conn, $uphist);
+				
+			}
 
 }
 
@@ -136,9 +158,6 @@ mysqli_close($conn);
 <form id="packages" action='Packages.php' method='get'>
     <p>What would you like to upgrade?</p>
     <p>
-
- 
-
         <input type="submit" class="btn btn-default" name="Check" value="Updates">
         <input type="submit" class="btn btn-default" name="Sec" value="Security">
         <input type="Submit" class="btn btn-default" name="Go" value="Go">
