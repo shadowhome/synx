@@ -227,7 +227,8 @@ $result = $conn->query($servers);
 					<input type="hidden" name=id value="<?php echo $id?>">
 					<input type="hidden" name=servername value="<?php echo $servername?>">
 					<input type="hidden" name=ip value="<?php echo $ip?>">
-					<input type="submit" class="btn btn-md btn-default" name="Up" value="Upgrades">
+					<input type="hidden" name=sshp value="<?php echo $sshp?>">
+					<input type="submit" class="btn btn-md btn-default" name="Up" value="Upgrades"> 
 				</form>
 			</div>
 		</div>

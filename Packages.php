@@ -70,14 +70,18 @@ $result = $conn->query($sql);
 						<td><?php echo $row["id"]; ?></td>
 						<td><?php echo $row["package"]; ?></td>
 						<td><?php echo $row["servername"]; ?></td>
-					<!-- 	<td><?php echo $row["upgrade"]?'<span class="glyphicon glyphicon-ok">&nbsp;</span>':''; ?></td> -->
 						<td><?php if ($row["upgrade"]==1) {
 				 				echo '<span class="glyphicon glyphicon-ok">&nbsp;</span>';
 						}
 							else {
 								echo '<span class="glyphicon glyphicon-remove"></span>';
 							}?></td>
-						<td><?php echo $row["security"]; ?></td>
+						<td><?php if ($row["security"]==1) {
+				 				echo '<span class="glyphicon glyphicon-ok">&nbsp;</span>';
+						}
+							else {
+								echo '<span class="glyphicon glyphicon-remove"></span>';
+							}?></td>
 						<td><?php echo $row["version"]; ?></td>
 						<td><?php echo $row["nversion"]; ?></td>
 					</tr>

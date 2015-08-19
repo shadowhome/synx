@@ -88,6 +88,7 @@ function sshiconn($cmd, $pass, $ip, $sshp=22){
 
 }
 function sshsysad($cmd, $ip, $sshp=22){
+	print_r($sshp);
 	$connection = ssh2_connect($ip, $sshp, array('hostkey', 'ssh-rsa'));
 	ssh2_auth_pubkey_file($connection, 'sysad','~/.ssh/id_rsa.pub', '~/.ssh/id_rsa');
 	$stream = ssh2_exec($connection, $cmd, true);
