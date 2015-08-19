@@ -103,6 +103,7 @@ all () {
 	security
 	md5
 	changelog
+	hwstats
 }
 
 
