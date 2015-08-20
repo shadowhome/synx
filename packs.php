@@ -74,7 +74,7 @@ $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$
 		//}
 	}
 	
-
+//	mysqli_query($conn, 'SET @@global.max_allowed_packet = ' . (strlen( $sql ) + 1024 ));
 	if (mysqli_query($conn, $sqlnew)&&mysqli_query($conn, $sql)) {
 
 		echo "New record created successfully";

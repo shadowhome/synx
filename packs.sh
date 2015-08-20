@@ -53,7 +53,7 @@ changelog () {
 	apt-get download $packs;
 	rm -f $workdir/changelog.*
 	for a in `ls /var/cache/apt/archives/*.deb`;do
-		changelog=$(apt-listchanges -f text -a $a|grep -v "Reading changelogs"|sed s"/'//")
+		changelog=$(apt-listchanges -f text -a $a|grep -v "Reading changelogs"|sed s"/'//"|head -30)
 		package=$(dpkg-deb --show $a|awk '{print$1}')
 		printf "UPDATE Packages SET changelog = '$changelog' WHERE package = '$package';" |sqlite3 $workdir/synx.db
 	done
@@ -87,7 +87,7 @@ md5 () {
 inst () {
 	cd $workdir
 	printf 'DELETE FROM Packages;'|sqlite3 $workdir/synx.db
-        find /var/lib/dpkg/info -name "*.list" -exec stat -c $'%n\t%y' {} \; |     sed -e 's,/var/lib/dpkg/info/,,' -e 's,\.list\t,\t,' |    sort -n |awk '{print$1, $2, $3}' |sed -e 's/.000000000//g'|sed -e 's/:amd64//g'|sed "s/ /,/g"|sed "s/$/,,,,,,,,/" > $workdir/previous
+        find /var/lib/dpkg/info -name "*.list" -exec stat -c $'%n\t%y' {} \; |     sed -e 's,/var/lib/dpkg/info/,,' -e 's,\.list\t,\t,' |    sort -n |awk '{print$1, $2, $3}' |sed -e 's/.000000000//g'|sed -e 's/:amd64//g'|sed "s/ /,/g"|sed "s/$/,,,,,,,,,,,,,/" > $workdir/previous
 	printf ".separator , \n.import $workdir/previous Packages" |sqlite3 $workdir/synx.db
 	for a in `cat /home/sysad/manage/previous |awk -F, '{print$1}'` ; do
 		for b in `dpkg -l|grep -w $a |grep -v ^ii |awk '{print$2}'`;do
