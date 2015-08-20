@@ -165,6 +165,8 @@ if(isset($_GET['Yes'])){
 				$changeu = "UPDATE Packages SET upgrade = 0, security = 0 WHERE id IN (".implode(',',$p_ids).")";
 				if($res){
 				mysqli_query($conn, $changeu)&&mysqli_query($conn, $uphist);
+				$cmd = "sudo /home/manage/packs.sh all"	;
+				$output = trim(unattendedssh($cmd, $ip, $sshp));
 				echo "Some manual intervention is required, please email wilhelm@fontera.com for a fix";
 				}
 				

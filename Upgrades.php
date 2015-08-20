@@ -130,7 +130,7 @@ if ($result->num_rows > 0) {
 if(isset($_GET['Go'])){
 	$secid = array();
 	$secid = (isset($_GET['sec-packages']))?$_GET['sec-packages']:$_GET['check-packages'];
-	print_r($secid);
+//	print_r($secid);
 	$packages = array();
 	echo "<p>Your going to upgrade:</p>";
 	foreach ($secid as $secpack) {
@@ -154,12 +154,12 @@ if (isset($_GET['Yes'])) {
 	
 	$packages = $_GET['packs'];
 	
-	//exec("ssh sysad@$ip 'export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install $packages'", $output);
+
 	$cmd = "export DEBIAN_FRONTEND=noninteractive;sudo apt-get -y install $packages; echo $?";
 	$output = trim(sshsysad($cmd, $ip, $sshp));
-//	echo implode('<br/>',$output);
+
 	flush();
-	
+              		
 	echo nl2br($output);
 	$res = (strripos($output,'100') !== strlen($output)-3);
 	
@@ -169,6 +169,8 @@ if (isset($_GET['Yes'])) {
 	$changes = "UPDATE Packages SET upgrade = 0, security = 0 WHERE package IN (".$listSet.") AND servers = $id";
 	if($res){
 	mysqli_query($conn, $changes);
+	$cmd = "sudo /home/manage/packs.sh all"	;
+	$output = trim(unattendedssh($cmd, $ip, $sshp));
 	}
 }
 

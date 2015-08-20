@@ -19,12 +19,21 @@ $ip=$_GET['ip'];
 $servername = $_GET['servername'];
 $company = $_GET['company'];
 
+if(isset($_REQUEST['Cron'])) {
+	$ip=$_GET['ip'];
+	$sshp=$_GET['sshp'];
+	$cmd = "sudo /home/manage/packs.sh all"	;
+	$output = trim(unattendedssh($cmd, $ip, $sshp));
+	//exit;
+	header( "Location: Servers.php?id=$id" );
+}
+
 @list($OS, $version, $releasever) = getOS();
 
 $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$releasever' WHERE id = $id";
 
 	exec("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, date, md5, cversion, rc, ii, changelog FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $lines);
-print_r("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, date, md5, cversion, rc, ii, changelog FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ");
+//print_r("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, date, md5, cversion, rc, ii, changelog FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ");
 	$sql="REPLACE INTO packages (package, version, security, upgrade, servers, servername, date, md5, nversion, rc, ii, changelog) VALUES";	
 	$sep = '';
 	
@@ -74,6 +83,9 @@ print_r("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, dat
 		//}
 	}
 	
+	
+
+	
 //	mysqli_query($conn, 'SET @@global.max_allowed_packet = ' . (strlen( $sql ) + 1024 ));
 	if (mysqli_query($conn, $sqlnew)&&mysqli_query($conn, $sql)) {
 
@@ -83,4 +95,7 @@ print_r("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, dat
 		echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 	}
 
+	
+
+	
 	mysqli_close($conn);

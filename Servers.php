@@ -231,6 +231,16 @@ $result = $conn->query($servers);
 					<input type="submit" class="btn btn-md btn-default" name="Up" value="Upgrades"> 
 				</form>
 			</div>
+					<div class="col-md-2" style="margin-bottom: 20px;">
+					<form action="packs.php" method='get'>
+					<input type="hidden" name=id value="<?php echo $id?>">
+					<input type="hidden" name=ip value="<?php echo $ip?>">
+					<input type="hidden" name=servername value="<?php echo $servername?>">
+					<input type="hidden" name=sshp value="<?php echo $sshp?>">
+					<input type="hidden" name=company value="<?php echo $company?>">
+					<input type="submit" class="btn btn-md btn-danger" name="Cron" value="Update cron">
+				</form>
+			</div>
 		</div>
 
 		<div class="table-responsive">
