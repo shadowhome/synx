@@ -126,6 +126,9 @@ case "$1" in
         inst)
 	    inst
             ;;
+	hwstats)
+	    hwstats
+	    ;;
 
         *)
             echo $"Usage: $0 {all|check|md5|changelog|inst}"
