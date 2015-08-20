@@ -36,7 +36,14 @@ function getOS($pass=false){
 	else {
 		$lsbresult1 = array();
 		$connection = ssh2_connect($ip, $sshp, array('hostkey', 'ssh-rsa'));
-		ssh2_auth_pubkey_file($connection, 'sysad','~/.ssh/id_rsa.pub', '~/.ssh/id_rsa');
+		if(!($connection)){
+			throw new Exception("fail: unable to establish connection\nPlease IP or if server is on and connected");
+		}
+		$pass_success = ssh2_auth_pubkey_file($connection, 'sysad','~/.ssh/id_rsa.pub', '~/.ssh/id_rsa');
+		$pass_success = ssh2_auth_password($connection, 'root', $pass);
+		if(!($pass_success)){
+			throw new Exception("fail: unable to establish connection\nPlease Check your password");
+		}
 		$stream = ssh2_exec($connection, $cmd);
 		$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
 		stream_set_blocking($errorStream, true);
