@@ -30,8 +30,8 @@ hwstats () {
         cpuc=`echo $cpu|awk '{print$4}'`
         cpus=`echo $cpu|awk '{print$5}'`
         cpuf=`echo $cpu|awk '{print$6}'`
-        mem=`free -m |grep Mem|awk '{print$2}'`
-        printf "UPDATE Packages SET cpua = '$arch', cpu = '$cpun', cput = '$cput', cpuc = '$cpuc', cpuf = '$cpuf', cpus = '$cpus', RAM = '$ram';"|sqlite3 $workdir/synx.db
+        mem=$(echo "scale=2; $(free -m |grep Mem|awk '{print$2}') / 1024" |bc )
+        printf "UPDATE Packages SET cpua = '$arch', cpu = '$cpun', cput = '$cput', cpuc = '$cpuc', cpuf = '$cpuf', cpus = '$cpus', RAM = '$mem';"|sqlite3 $workdir/synx.db
 }
 check () {
 	apt-get update
