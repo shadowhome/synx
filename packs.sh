@@ -23,15 +23,15 @@ fi
 #Perform checks of all available packages for upgrade
 #if [ $1 == "check" ];then
 hwstats () {
-	cpu=`lscpu |grep -E 'Architecture|CPU\(s\)|Thread|Core|CPU MHz|Socket'grep -v list |grep -v NUMA |awk -F: '{print$2}'`
-	arch=`echo $cpu|awk '{print$1}'`
-	cpun=`echo $cpu|awk '{print$2}'`
-	cput=`echo $cpu|awk '{print$3}'`
-	cpuc=`echo $cpu|awk '{print$4}'`
-	cpuf=`echo $cpu|awk '{print$5}'`
-	cpus=`echo $cpu|awk '{print$6}'`
-	mem=`free -m |grep Mem|awk '{print$2}'`
-	printf "UPDATE Packages SET cpua = '$arch', cpu = '$cpun', cput = '$cput', cpuc = '$cpuc', cpuf = '$cpuf', cpus = '$spus';"|sqlite3 $workdir/synx.db
+        cpu=`lscpu |grep -E 'Architecture|CPU\(s\)|Thread|Core|CPU MHz|Socket'|grep -v list |grep -v NUMA |awk -F: '{print$2}'`
+        arch=`echo $cpu|awk '{print$1}'`
+        cpun=`echo $cpu|awk '{print$2}'`
+        cput=`echo $cpu|awk '{print$3}'`
+        cpuc=`echo $cpu|awk '{print$4}'`
+        cpus=`echo $cpu|awk '{print$5}'`
+        cpuf=`echo $cpu|awk '{print$6}'`
+        mem=`free -m |grep Mem|awk '{print$2}'`
+        printf "UPDATE Packages SET cpua = '$arch', cpu = '$cpun', cput = '$cput', cpuc = '$cpuc', cpuf = '$cpuf', cpus = '$cpus';"|sqlite3 $workdir/synx.db
 }
 check () {
 	apt-get update
