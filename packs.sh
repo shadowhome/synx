@@ -16,7 +16,7 @@ if [ ! -d /home/sysad/manage/ ]; then
 fi
 
 if [ ! -f /home/sysad/manage/synx.db ]; then
-	STRUCTURE="CREATE TABLE Packages (package TEXT,date TEXT, time TEXT, rc INT, ii INT, upgrade INT, security INT, changelog TEXT, cversion TEXT, nversion TEXT,md5 TEXT,cpua TEXT, cpu TEXT,cput TEXT, cpuc TEXT, cpuf TEXT, cpus TEXT);";
+	STRUCTURE="CREATE TABLE Packages (package TEXT,date TEXT, time TEXT, rc INT, ii INT, upgrade INT, security INT, changelog TEXT, cversion TEXT, nversion TEXT,md5 TEXT,cpua TEXT, cpu TEXT,cput TEXT, cpuc TEXT, cpuf TEXT, cpus TEXT, RAM TEXT);";
 	echo $STRUCTURE |sqlite3 /home/sysad/manage/synx.db
 fi
 
@@ -31,7 +31,7 @@ hwstats () {
         cpus=`echo $cpu|awk '{print$5}'`
         cpuf=`echo $cpu|awk '{print$6}'`
         mem=`free -m |grep Mem|awk '{print$2}'`
-        printf "UPDATE Packages SET cpua = '$arch', cpu = '$cpun', cput = '$cput', cpuc = '$cpuc', cpuf = '$cpuf', cpus = '$cpus';"|sqlite3 $workdir/synx.db
+        printf "UPDATE Packages SET cpua = '$arch', cpu = '$cpun', cput = '$cput', cpuc = '$cpuc', cpuf = '$cpuf', cpus = '$cpus', RAM = '$ram';"|sqlite3 $workdir/synx.db
 }
 check () {
 	apt-get update

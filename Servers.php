@@ -118,7 +118,7 @@ $result = $conn->query($servers);
 			$updatesOnly = false;
 		}
 
-		$sql = "SELECT  id, servername, ip, company, version, OS, description, releasever, sshp ".
+		$sql = "SELECT  id, servername, ip, company, version, OS, description, releasever, sshp, CPUF,CPUArch,CPUNo,CPUSockets,CPUThreads,CPUC ".
 			   "FROM servers WHERE id = '$id'";
 
 		$result = mysqli_query($conn, $sql);
@@ -137,8 +137,18 @@ $result = $conn->query($servers);
 		$ip          = $row['ip'];
 		$company     = $row['company'];
 		$description = $row['description'];
-		$sshp        = $row['sshp']; ?>
+		$sshp        = $row['sshp']; 
+		$cpuf          	= $row['CPUF'];
+		$cpua  			= $row['CPUArch'];
+		$cpun          	= $row['CPUNo'];
+		$cpus	     	= $row['CPUSockets'];
+		$cput		 	= $row['CPUThreads'];
+		$cpuc		 	= $row['CPUC'];
 		
+
+		
+		
+		?>
 		<a name="server<?php echo $row['id'];?>" style="text-decoration: none; color: black;">
 			<h1 style="text-align: center;">SERVER DETAILS</h1>
 		</a>
@@ -173,6 +183,34 @@ $result = $conn->query($servers);
 				</tbody>
 			</table>
 		</div>
+		
+		
+				<div class="table-responsive">
+			<table class="table table-striped sortable">
+				<thead>
+					<tr>
+						<th scope="col">No Cpus</th>
+						<th scope="col">CPU Threads</th>
+						<th scope="col">CPU Cores</th>
+						<th scope="col">CPU Freq</th>
+						<th scope="col">CPU Arch</th>
+						<th scope="col">CPU Sockets</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><?php echo $cpun; ?></td>
+						<td><?php echo $cput; ?></td>
+						<td><?php echo $cpuc; ?></td>
+						<td><?php echo $cpuf; ?></td>
+						<td><?php echo $cpua; ?></td>
+						<td><?php echo $cpus; ?></td>
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
 		
 		<div class="panel panel-primary">
 			<div class="panel-heading">
