@@ -19,7 +19,13 @@ function getOS($pass=false){
 	$lsbresult1   = array();
 	if (isset($pass) && $pass){
 		$connection = ssh2_connect($ip, $sshp);
-		echo ssh2_auth_password($connection, 'root', $pass)?'success':'fail';
+		if(!($connection)){
+			throw new Exception("fail: unable to establish connection\nPlease IP or if server is on and connected");
+		}
+		$pass_success = ssh2_auth_password($connection, 'root', $pass);
+		if(!($pass_success)){
+			throw new Exception("fail: unable to establish connection\nPlease Check your password");
+		}
 		$cmd="lsb_release -as";
 		$stream = ssh2_exec($connection, $cmd);
 		$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
