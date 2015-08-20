@@ -39,6 +39,13 @@ $result = $conn->query($sql);
             }
         });
     });
+    </script> 
+    <script type="text/javascript">
+    $(document).ready(function() 
+    	    { 
+    	        $("#myTable").tablesorter(); 
+    	    } 
+    	); 
     </script>
 <div class="container">
 	<div class="page-header">
@@ -46,7 +53,7 @@ $result = $conn->query($sql);
 	</div>
 
 	<div class="table-responsive">
-		<table class="table table-striped">
+		<table name=myTable id=myTable class="table table-striped sortable">
 			<thead>
 				<tr>
 				

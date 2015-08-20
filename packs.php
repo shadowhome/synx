@@ -18,6 +18,7 @@ $id=$_GET['id'];
 $ip=$_GET['ip'];
 $servername = $_GET['servername'];
 $company = $_GET['company'];
+$sshp = $_GET['sshp'];
 
 if(isset($_REQUEST['Cron'])) {
 	$ip=$_GET['ip'];
@@ -29,8 +30,12 @@ if(isset($_REQUEST['Cron'])) {
 }
 
 @list($OS, $version, $releasever) = getOS();
+$cmd = "printf \"SELECT cpua, cpun, cput, cpuc, cpuf |sqlite3 /home/sysad/manage/synx.db \" ";
+$output = trim(sshsysad($cmd, $ip, $sshp));
+print_r($output);
 
 $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$releasever' WHERE id = $id";
+print_r($sqlnew);
 
 	exec("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, date, md5, cversion, rc, ii, changelog FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $lines);
 //print_r("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, date, md5, cversion, rc, ii, changelog FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ");
@@ -90,7 +95,7 @@ $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$
 	if (mysqli_query($conn, $sqlnew)&&mysqli_query($conn, $sql)) {
 
 		echo "New record created successfully";
-		header( "Location: Servers.php?id=$id" );
+	//	header( "Location: Servers.php?id=$id" );
 	} else {
 		echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 	}

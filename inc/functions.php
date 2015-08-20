@@ -34,6 +34,7 @@ function getOS($pass=false){
 		$lsbresult1 = stream_get_contents($stream);
 	}
 	else {
+
 		$lsbresult1 = array();
 		$connection = ssh2_connect($ip, $sshp, array('hostkey', 'ssh-rsa'));
 		if(!($connection)){
@@ -43,6 +44,7 @@ function getOS($pass=false){
 		if(!($pass_success)){
 			throw new Exception("fail: unable to establish connection\nPlease Check your password");
 		}
+		$cmd="lsb_release -as";
 		$stream = ssh2_exec($connection, $cmd);
 		$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
 		stream_set_blocking($errorStream, true);
@@ -106,7 +108,7 @@ function sshiconn($cmd, $pass, $ip, $sshp=22){
 
 }
 function sshsysad($cmd, $ip, $sshp=22){
-//	print_r($sshp);
+
 	$connection = ssh2_connect($ip, $sshp, array('hostkey', 'ssh-rsa'));
 	if(!($connection)){
 		throw new Exception("fail: unable to establish connection\nPlease IP or if server is on and connected");
@@ -127,7 +129,6 @@ function sshsysad($cmd, $ip, $sshp=22){
 	return $output;
 }
 function unattendedssh($cmd, $ip, $sshp=22){
-//	print_r($sshp);
 	$connection = ssh2_connect($ip, $sshp, array('hostkey', 'ssh-rsa'));
 	if(!($connection)){
 		throw new Exception("fail: unable to establish connection\nPlease IP or if server is on and connected");
@@ -140,11 +141,9 @@ function unattendedssh($cmd, $ip, $sshp=22){
 	$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
 	stream_set_blocking($errorStream, false);
 	stream_set_blocking($stream, false);
-//	$output = stream_get_contents($stream);
 	fclose($stream);
 	fclose($errorStream);
-//	ssh2_exec($connection, 'exit');
 	unset($connection);
-//	return $output;
 }
+
 ?>

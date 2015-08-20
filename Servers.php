@@ -13,13 +13,22 @@ if (!$conn) {
 }
 $result = $conn->query($servers);
 ?>
+
+    <script type="text/javascript">
+    $(document).ready(function() 
+    	    { 
+    	        $("#myTable").tablesorter(); 
+    	    } 
+    	); 
+    </script>
+    
 <div class="container">
 	<div class="page-header">
 		<h1 style="text-align: center;">Server Manager</h1>
 	</div>
 
 	<div class="table-responsive">
-		<table class="table table-striped">
+		<table class="table table-striped sortable">
 			<thead>
 				<tr>
 					<th scope="col">ID</th>
@@ -135,7 +144,7 @@ $result = $conn->query($servers);
 		</a>
 
 		<div class="table-responsive">
-			<table class="table table-striped">
+			<table class="table table-striped sortable">
 				<thead>
 					<tr>
 						<th scope="col">ID</th>
@@ -244,7 +253,7 @@ $result = $conn->query($servers);
 		</div>
 
 		<div class="table-responsive">
-			<table class="table table-striped">
+			<table class="table table-striped sortable">
 				<thead>
 					<tr>
 						<th scope="col">ID</th>
