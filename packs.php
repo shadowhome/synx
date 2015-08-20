@@ -30,12 +30,12 @@ if(isset($_REQUEST['Cron'])) {
 }
 
 @list($OS, $version, $releasever) = getOS();
-$cmd = "echo 'SELECT cpua, cpu, cput, cpuc, cpuf, cpus FROM Packages;'|sqlite3 /home/sysad/manage/synx.db|head -1";
+$cmd = "echo 'SELECT cpua, cpu, cput, cpuc, cpuf, cpus, RAM FROM Packages;'|sqlite3 /home/sysad/manage/synx.db|head -1";
 $output = trim(sshsysad($cmd, $ip, $sshp));
 print_r($output);
 $hwstat = explode("|", $output);
 print_r($hwstat);
-$sqlhw = "UPDATE servers SET CPUArch = '$hwstat[0]', CPUNo = '$hwstat[1]', CPUSockets = '$hwstat[5]', CPUThreads = '$hwstat[2]', CPUF = '$hwstat[4]', CPUC = '$hwstat[3]' WHERE id = $id";
+$sqlhw = "UPDATE servers SET CPUArch = '$hwstat[0]', CPUNo = '$hwstat[1]', CPUSockets = '$hwstat[5]', CPUThreads = '$hwstat[2]', CPUF = '$hwstat[4]', CPUC = '$hwstat[3]', RAM = '$hwstat[6]' WHERE id = $id";
 print_r($sqlhw);
 $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$releasever' WHERE id = $id";
 //print_r($sqlnew);

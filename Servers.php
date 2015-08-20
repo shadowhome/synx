@@ -118,7 +118,7 @@ $result = $conn->query($servers);
 			$updatesOnly = false;
 		}
 
-		$sql = "SELECT  id, servername, ip, company, version, OS, description, releasever, sshp, CPUF,CPUArch,CPUNo,CPUSockets,CPUThreads,CPUC ".
+		$sql = "SELECT  id, servername, ip, company, version, OS, description, releasever, sshp, CPUF,CPUArch,CPUNo,CPUSockets,CPUThreads,CPUC,RAM ".
 			   "FROM servers WHERE id = '$id'";
 
 		$result = mysqli_query($conn, $sql);
@@ -144,6 +144,7 @@ $result = $conn->query($servers);
 		$cpus	     	= $row['CPUSockets'];
 		$cput		 	= $row['CPUThreads'];
 		$cpuc		 	= $row['CPUC'];
+		$ram		 	= $row['RAM'];
 		
 
 		
@@ -195,6 +196,7 @@ $result = $conn->query($servers);
 						<th scope="col">CPU Freq</th>
 						<th scope="col">CPU Arch</th>
 						<th scope="col">CPU Sockets</th>
+						<th scope="col">RAM</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -205,6 +207,7 @@ $result = $conn->query($servers);
 						<td><?php echo $cpuf; ?></td>
 						<td><?php echo $cpua; ?></td>
 						<td><?php echo $cpus; ?></td>
+						<td><?php echo $ram; ?></td>
 
 					</tr>
 				</tbody>
