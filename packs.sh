@@ -23,7 +23,7 @@ fi
 #Perform checks of all available packages for upgrade
 #if [ $1 == "check" ];then
 hwstats () {
-	cpu=`lscpu |grep -E 'Architecture|CPU\(s\)|Thread|Core|CPU MHz|Socket' |awk -F: '{print$2}'`
+	cpu=`lscpu |grep -E 'Architecture|CPU\(s\)|Thread|Core|CPU MHz|Socket'grep -v list |grep -v NUMA |awk -F: '{print$2}'`
 	arch=`echo $cpu|awk '{print$1}'`
 	cpun=`echo $cpu|awk '{print$2}'`
 	cput=`echo $cpu|awk '{print$3}'`
