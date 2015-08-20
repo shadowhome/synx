@@ -24,7 +24,7 @@ $company = $_GET['company'];
 $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$releasever' WHERE id = $id";
 
 	exec("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, date, md5, cversion, rc, ii, changelog FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $lines);
-
+print_r("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, date, md5, cversion, rc, ii, changelog FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ");
 	$sql="REPLACE INTO packages (package, version, security, upgrade, servers, servername, date, md5, nversion, rc, ii, changelog) VALUES";	
 	$sep = '';
 	
