@@ -26,7 +26,7 @@ if(isset($_REQUEST['Cron'])) {
 	$cmd = "sudo /home/sysad/manage/packs.sh all"	;
 	$output = sshsysad($cmd, $ip, $sshp);
 	//exit;
-	//header( "Location: Servers.php?id=$id" );
+	header( "Location: Servers.php?id=$id" );
 	print_r($output);
 }
 
@@ -100,7 +100,7 @@ $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$
 	if (mysqli_query($conn, $sqlnew)&&mysqli_query($conn, $sql)&&mysqli_query($conn, $sqlhw)) {
 
 		echo "New record created successfully";
-		//header( "Location: Servers.php?id=$id" );
+		header( "Location: Servers.php?id=$id" );
 	} else {
 		echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 	}
