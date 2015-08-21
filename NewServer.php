@@ -23,7 +23,7 @@ value="no" id='no'>No
 <br>
 Description: <textarea name="description" rows="5" cols="40"><?php echo "description";?></textarea><br>
 Root Password: <input type="text" name="pass" value="<?php echo 'Password'?>" id='pass'><br>
-This is used to create the nessesary script and to setup an unprivileged user on remote with access using ssh-key from origin server
+This is used to create the necessary script and to setup an unprivileged user on remote with access using ssh-key from origin server
 <br>
 <br>
 <input type="submit">

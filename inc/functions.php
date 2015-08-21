@@ -9,34 +9,33 @@ function _dbList($stringArray){
 	return implode(', ',$stringArray);
 }
 
-function getOS($pass=false){
-	$ip = $_REQUEST['ip'];
-	$lsbresult   = array();
-	if (isset($pass) && $pass){
-		$connection = ssh2_connect($ip, 22);
-		echo ssh2_auth_password($connection, 'root', $pass)?'success':'fail';
-		$cmd="lsb_release -as";
-		$stream = ssh2_exec($connection, $cmd);
-		$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
-		stream_set_blocking($errorStream, true);
-		stream_set_blocking($stream, true);
-		$lsbresult = stream_get_contents($stream);
-	}
-	else {
-		exec("ssh sysad@$ip 'lsb_release -as'",$lsbresult );
-	}
-
-
-		if(!empty($lsbresult)) {
-		$OS        = $lsbresult[0];
-		$version  = $lsbresult[3];
-		$releasever = $lsbresult[2];
+function updateOsVersion(\Synx\Model\Server &$server){
+	try{
+		$output = array();
+		if ($server->isPasswordSet()){
+			$connection = ssh2_connect($server->getIp(), 22);
+			echo ssh2_auth_password($connection, 'root', $server->getPassword())?'success':'fail';
+			$cmd="lsb_release -as";
+			$stream = ssh2_exec($connection, $cmd);
+			$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
+			stream_set_blocking($errorStream, true);
+			stream_set_blocking($stream, true);
+			$output = stream_get_contents($stream);
 		}
 		else {
-			echo "No values present";
-			die();
-}
-	return array($OS, $version, $releasever);
+			exec("ssh sysad@".$server->getPassword()." 'lsb_release -as'", $output);
+		}
+
+		if(!empty($output)) {
+			$output = explode(' ',$output);
+			$server
+				->setOsName($output[0])
+				->setOsVersionCode($output[2])
+				->setOsVersionName($output[3]);
+		}
+	}catch(Exception $e){
+		print_r($e->getMessage());
+	}
 }
 function getPACKS(){
 	$ip = $_GET['ip'];
@@ -54,5 +53,3 @@ function sshiconn(){
 	
 	$stream = ssh2_exec($connection, '/usr/local/bin/php -i');
 }
-
-?>
