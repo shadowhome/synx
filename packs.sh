@@ -53,7 +53,7 @@ changelog () {
 	apt-get download $packs;
 	for ch in $(echo $packs);do
 		ver=$(dpkg-query -s $ch|grep ^Version)
-		printf "UPDATE Packages SET cversion = '$ch' WHERE package = '$ch'"|sudo sqlite3 $workdir/synx.db
+		printf "UPDATE Packages SET cversion = '$ver' WHERE package = '$ch';"|sudo sqlite3 $workdir/synx.db
 	done
 	rm -f $workdir/changelog.*
 	for a in `ls /var/cache/apt/archives/*.deb`;do
