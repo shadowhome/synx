@@ -6,14 +6,18 @@
  */
 namespace Synx\Model;
 
+include_once 'AbstractModel.php';
+
 use InvalidArgumentException;
 use Exception;
 
-class Server{
+class Server extends AbstractModel
+{
     private $_id;
     private $_name;
     private $_ip;
     private $_port;
+    //ToDo: Move company into separate model and DB table
     private $_company = '';
     private $_description = '';
     private $_osName = '';

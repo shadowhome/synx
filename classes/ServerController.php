@@ -29,7 +29,7 @@ class ServerController extends AbstractController
         $sql = "SELECT `id` AS `_id`, `servername` AS `_name`, `ip` AS `_ip`, `company` AS `_company`, `OS` AS `_osName`, `version` AS `_osVersionCode`, `description` AS `_description`, `releasever` AS `_osVersionName` FROM `servers`";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
-        return $statement->fetchAll(PDO::FETCH_CLASS, 'Synx\Model\Server');
+        return $statement->fetchAll(PDO::FETCH_CLASS, Server::class);
     }
 
     /**
@@ -51,7 +51,7 @@ class ServerController extends AbstractController
         if($statement->rowCount() !== 1){
             throw new Exception('Server cannot be found, check the ID is valid');
         }
-        return $statement->fetchObject('Synx\Model\Server');
+        return $statement->fetchObject(Server::class);
     }
 
     /**
@@ -76,7 +76,7 @@ class ServerController extends AbstractController
         if($statement->rowCount() !== 1){
             throw new Exception('Server cannot be found, check the IP is valid');
         }
-        return $statement->fetchObject('Synx\Model\Server');
+        return $statement->fetchObject(Server::class);
     }
 
     /**
