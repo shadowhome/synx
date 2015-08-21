@@ -4,10 +4,10 @@ workdir=/home/sysad/manage
 
 #Need this to get changelogs
 if [ ! -x /usr/bin/apt-listchanges ]; then
-	apt-get -y install apt-listchanges sudo sqlite3
+	apt-get -y install apt-listchanges sqlite3
 fi
-if [ ! -x /usr/bin/sudo sqlite3 ]; then
-        apt-get -y install sudo sqlite3
+if [ ! -x /usr/bin/sqlite3 ]; then
+        apt-get -y install sqlite3
 fi
 
 #Create Work dir if not exist
