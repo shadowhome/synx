@@ -52,7 +52,7 @@ changelog () {
 	packs=$(printf "SELECT package FROM Packages;"|sudo sqlite3 /home/sysad/manage/synx.db)
 	apt-get download $packs;
 	for ch in $(echo $packs);do
-		ver=$(dpkg-query -s $ch|grep ^Version|awk -F: '{print$2}' |sed s'/ //g')
+		ver=$(dpkg-query -s $ch|grep ^Version|awk -F: '{print$2,":",$3}' |sed s'/ //g')
 		printf "UPDATE Packages SET cversion = '$ver' WHERE package = '$ch';"|sudo sqlite3 $workdir/synx.db
 	done
 	rm -f $workdir/changelog.*
