@@ -50,8 +50,11 @@ changelog () {
 	cd /var/cache/apt/archives/;
 	apt-get autoclean;
 	packs=$(printf "SELECT package FROM Packages;"|sudo sqlite3 /home/sysad/manage/synx.db)
-	echo $pakcs
 	apt-get download $packs;
+	for ch in $(echo $packs);do
+		ver=$(dpkg-query -s $ch|grep ^Version)
+		printf "UPDATE Packages SET cversion = '$ch' WHERE package = '$ch'"|sudo sqlite3 $workdir/synx.db
+	done
 	rm -f $workdir/changelog.*
 	for a in `ls /var/cache/apt/archives/*.deb`;do
 		changelog=$(apt-listchanges -f text -a $a|grep -v "Reading changelogs"|sed s"/'//"|head -30)
