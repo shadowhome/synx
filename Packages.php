@@ -20,6 +20,11 @@ if (isset($_GET['Sec'])) {
 elseif(isset($_GET['Check'])) {
 	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM packages where upgrade = 1";
 	}
+elseif(isset($_GET['PackS'])) {
+	$pselect = $_GET['PackS'];
+	$sql = "SELECT package, id, version, nversion, servername, security, upgrade FROM packages WHERE package = '$pselect'";
+//	print_r($sql);
+	}
 
 $result = $conn->query($sql);
 
@@ -75,7 +80,8 @@ $result = $conn->query($sql);
 					<tr>
 						<td><input type="checkbox" name="check-packages[]" value="<?php echo $row['id'];?>" class="check-packages" form="packages"/></td>
 						<td><?php echo $row["id"]; ?></td>
-						<td><?php echo $row["package"]; ?></td>
+					<!--  	<td><?php echo $row["package"]; ?></td> -->
+						<td><a href="Packages.php?PackS=<?php echo $row['package']; ?>#package<?php echo $row['package']; ?>"><?php echo $row["package"]; ?></a></td>
 						<td><?php echo $row["servername"]; ?></td>
 						<td><?php if ($row["upgrade"]==1) {
 				 				echo '<span class="glyphicon glyphicon-ok">&nbsp;</span>';

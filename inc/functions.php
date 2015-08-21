@@ -20,12 +20,12 @@ function getOS($pass=false){
 
 	$methods = array('hostkey', 'ssh-rsa');
 	if(isset($pass) && $pass){
-		$methods = false;
+		$methods = array();
 	}
 	
 	$connection = ssh2_connect($ip, $sshp, $methods);
 	if(!($connection)){
-		throw new Exception("fail: unable to establish connection\nPlease IP or if server is on and connected");
+		throw new Exception("fail: unable to establish connection, please Check IP or if server is on and connected");
 	}
 	$pass_success = false;
 	
@@ -175,5 +175,40 @@ function unattendedssh($cmd, $ip, $sshp=22){
 	fclose($rsa);
 	unset($connection);
 }
-
+//function user_exec($shell,$cmdu) {
+//	fwrite($shell,$cmdu . "\n");
+//	$output = "";
+//	$start = false;
+//	$start_time = time();
+//	$max_time = 2; //time in seconds
+//	while(((time()-$start_time) < $max_time)) {
+//		$line = fgets($shell);
+//		if(!strstr($line,$cmdu)) {
+//			if(preg_match('/\[start\]/',$line)) {
+//				$start = true;
+//			}elseif(preg_match('/\[end\]/',$line)) {
+//				return $output;
+//			}elseif($start){
+//				$output[] = $line;
+//			}
+//		}
+//	}
+//}
+//function unattendedssh($cmd, $ip, $sshp=22){
+//	$connection = ssh2_connect($ip, $sshp, array('hostkey', 'ssh-rsa'));
+//	$rsa_pub = realpath($_SERVER['HOME'].'/.ssh/id_rsa.pub');
+//	$rsa = realpath($_SERVER['HOME'].'/.ssh/id_rsa');
+//	if(!($connection)){
+//		throw new Exception("fail: unable to establish connection\nPlease IP or if server is on and connected");
+//	}
+//	$pass_success = ssh2_auth_pubkey_file($connection, 'sysad',$rsa_pub, $rsa);
+//	if(!($pass_success)){
+//		throw new Exception("fail: unable to establish connection\nPlease Check your password");
+//	}
+//	$shell = ssh2_shell($connection,"bash");
+//	$cmdu = "echo '[start]';$cmd;echo '[end]'";
+//	$output = user_exec($shell,$cmdu);
+//	fclose($shell);
+//	return $output;
+//}
 ?>

@@ -94,7 +94,7 @@ if ($_REQUEST['populate'] == 'yes') {
 	sshiconn($cmd, $pass, $ip, $sshp);
 	flush();
 	echo "Setting cronjobs and sudo access to perform upgrades when asked to";
-	$cmd="su - sysad -c 'mkdir -p /home/sysad/.ssh; chmod 700 /home/sysad/.ssh; echo \"$sshpub\" >> /home/sysad/.ssh/authorized_keys';echo \"10 1 * * * root /home/sysad/manage/packs.sh all\" >> /etc/crontab;echo \"sysad   ALL=(root)      NOPASSWD: /usr/bin/apt-get, /home/sysad/manage/packs.sh \" >> /etc/sudoers ";
+	$cmd="su - sysad -c 'mkdir -p /home/sysad/.ssh; chmod 700 /home/sysad/.ssh; echo \"$sshpub\" >> /home/sysad/.ssh/authorized_keys';echo \"10 1 * * * root /home/sysad/manage/packs.sh all\" >> /etc/crontab;echo \"Cmnd_Alias SYNX = /usr/bin/apt-get, /home/sysad/manage/packs.sh, /usr/bin/sqlite3 \" >> /etc/sudoers;echo \"sysad   ALL=(root)      NOPASSWD: SYNX \" >> /etc/sudoers ";
 	sshiconn($cmd, $pass, $ip, $sshp);
 	flush();
 	
