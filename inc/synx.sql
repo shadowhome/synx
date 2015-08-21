@@ -90,4 +90,17 @@ CREATE TABLE `package_version` (
 --
 -- Table structure for table `package_update`
 --
-git
+
+DROP TABLE IF EXISTS `package_update`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `package_update` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `package_version_id` int(10) unsigned NOT NULL,
+  `server_id` int(10) unsigned NOT NULL,
+  `installed_date` DATE NULL,
+  `removed_date` DATE NULL,
+  CONSTRAINT 'update1' UNIQUE KEY ('package_version_id', 'server_id')
+
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
