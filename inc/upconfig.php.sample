@@ -1,4 +1,6 @@
 <?php
+//This function is crucial to run this until Wilhelm Ellmann or Andy Abbott can write me an API
+if (!function_exists("ssh2_connect")) die("function ssh2_connect doesn't exist");
 $db_host	=	"localhost";
 $db_user	=	'username';
 $db_pass	=	"password";

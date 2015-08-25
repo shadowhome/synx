@@ -3,3 +3,4 @@ inc/upconfig.php
 .settings
 .project
 master
+.DS_Store

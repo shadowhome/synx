@@ -1,0 +1,31 @@
+/*
+Theme Name: Synx
+Author: Blaize Liebenberg
+Author URI: http://www.bweb.co.za/
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+*/
+
+@import "compass";
+@import "compass/reset";
+
+@import "../../vendor/bootstrap-sass/assets/stylesheets/bootstrap";
+
+// Here we import our partials
+@import "_partials/variables";
+@import "_partials/mixins";
+@import "_partials/typography";
+
+
+#top-link-block.affix-top {
+    position: absolute; 
+    bottom: -82px; 
+    left: 10px;
+    z-index: 9999;
+}
+#top-link-block.affix {
+    position: fixed;
+    bottom: 18px;
+    left: 10px;
+    z-index: 9999;
+}

@@ -1,14 +1,13 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
-</head>
-
-    <?php
-include 'nav.php';
-echo CNavigation::GenerateMenu($menu);
-	?>
-    </body>
-
-</html>
+<?php
+	//Include a generic header
+	include 'inc/html/header.php';
+?>
+<div class="container">
+	<div class="page-header">
+		<h1 style="text-align: center;">Synx Systems Manager</h1>
+	</div>
+</div>
+<?php
+	//Include a generic footer
+	include 'inc/html/footer.php';
+?>

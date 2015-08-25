@@ -1,5 +1,8 @@
 <?php
-include __DIR__.'/inc/functions.php';
+//Include a generic header
+include 'inc/html/header.php';
+include 'inc/upconfig.php';
+$servers = 'SELECT * from servers ORDER BY servername';
 
 //ToDo: Change Classes to autoload
 include __DIR__.'/classes/Server.php';
@@ -10,19 +13,27 @@ use Synx\Controller\ServerController;
 $serverController = new ServerController();
 $servers = $serverController->getServers();
 ?>
-<form action="DelServer.php" method="get">
-    <?php foreach($servers as $server) : ?>
 
-    <input type="radio" name="server"  value="<?php echo $server->getId(); ?>" /> <?php echo $server->getName(); ?>
-    
-    <?php endforeach; ?>
+<div class="container">
+	<div class="page-header">
+		<h1 style="text-align: center;">Delete?</h1>
+	</div>
 
-  <input type="submit" value="submit" />
-
-</form>
+	<form action="DelServer.php" method="get">
+	    <?php foreach($arrRows as $row) : ?>
+		    <input type="radio" name="server" value="<?php echo $row['id']; ?>" /> <?php echo $row['servername']; ?><br />
+	    <?php endforeach; ?>
+	    <br />
+	  <input class="btn btn-default" type="submit" value="submit" />
+	</form>
+	<a href="Servers.php" class="btn btn-lg btn-link" style="float: right;">Back to Servers</a>
+	<br /><br />
+</div>
 <?php
 if(isset($_GET['server'])){
 	$server = $serverController->getServerByID($_GET['server']);
 	$serverController->removeServer($server);
 }
-
+	//Include a generic footer
+	include 'inc/html/footer.php';
+?>
