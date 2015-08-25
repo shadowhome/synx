@@ -16,14 +16,11 @@ class Server extends AbstractModel
     private $_id;
     private $_name;
     private $_ip;
-    private $_port;
-    //ToDo: Move company into separate model and DB table
-    private $_company = '';
+    private $_port = 22;
     private $_description = '';
-    private $_osName = '';
-    private $_osVersionCode = '';
-    private $_osVersionName = '';
     private $_password;
+    private $_companyId;
+    private $_osVersionId;
 
     /**
      * Get the unique ID for the server
@@ -44,12 +41,7 @@ class Server extends AbstractModel
      * @throws InvalidArgumentException
      */
     public function setId($id){
-        if(!is_int($id)){
-            throw new InvalidArgumentException('Server ID is not an integer');
-        }
-        if(!$id){
-            throw new InvalidArgumentException('Server ID is null.');
-        }
+        self::_validateRequiredInt($id);
         $this->_id = $id;
         return $this;
     }
@@ -73,13 +65,7 @@ class Server extends AbstractModel
      * @throws Exception
      */
     public function setName($name){
-        if(!is_string($name)){
-            throw new InvalidArgumentException('Server Name is not a string');
-        }
-        $name = trim($name);
-        if(!$name){
-            throw new InvalidArgumentException('Server Name is null.');
-        }
+        self::_validateRequiredString($name);
         $this->_name = $name;
         return $this;
     }
@@ -105,16 +91,7 @@ class Server extends AbstractModel
      */
     public function setIp($ip)
     {
-        if(!is_string($ip)){
-            throw new InvalidArgumentException('Server IP is not a string');
-        }
-        $ip = trim($ip);
-        if(!$ip){
-            throw new InvalidArgumentException('Server IP is null');
-        }
-        if(!filter_var($ip,FILTER_VALIDATE_IP)){
-            throw new InvalidArgumentException('Server IP is not valid');
-        }
+        self::_validateRequiredIp($ip);
         $this->_ip = $ip;
         return $this;
     }
@@ -139,34 +116,35 @@ class Server extends AbstractModel
      * @throws InvalidArgumentException
      */
     public function setPort($port){
-        if(!is_int($port)){
-            throw new InvalidArgumentException('Server Port is not an integer');
-        }
+        self::_validateRequiredInt($port);
         $this->_port = $port;
         return $this;
     }
 
     /**
-     * Get the Server Company Name
-     * @return string
+     * Get the associated Company Id
+     * @return int
+     * @throws Exception
+     *
      */
-    public function getCompany()
+    public function getCompanyId()
     {
-        return $this->_company;
+        if(!$this->_companyId){
+            throw new Exception('Server Company ID has not been set.');
+        }
+        return $this->_companyId;
     }
 
     /**
-     * Set the Server Company Name
-     * @param string $company
+     * Set the associated Company Id
+     * @param int $companyId
      * @return $this
      * @throws InvalidArgumentException
      */
-    public function setCompany($company)
+    public function setCompanyId($companyId)
     {
-        if(!is_string($company)){
-            throw new InvalidArgumentException('Server Company is not a string');
-        }
-        $this->_company = trim($company);
+        self::_validateRequiredInt($companyId);
+        $this->_companyId = $companyId;
         return $this;
     }
 
@@ -187,82 +165,35 @@ class Server extends AbstractModel
      */
     public function setDescription($description)
     {
-        if(!is_string($description)){
-            throw new InvalidArgumentException('Server Description is not a string');
-        }
-        $this->_description = trim($description);
+        self::_validateRequiredString($description, true);
+
+        $this->_description = $description;
         return $this;
     }
 
     /**
-     * Get the Server Operating System Reference
-     * @return string
+     * Get the associated Operating System Version Id
+     * @return int
+     * @throws Exception
      */
-    public function getOsName()
+    public function getOsVersionId()
     {
-        return $this->_osName;
+        if(!$this->_osVersionId){
+            throw new Exception('Server OS Version ID has not been set.');
+        }
+        return $this->_osVersionId;
     }
 
     /**
-     * Set the Server Operating System Reference
-     * @param string $osName
+     * Set the associated Operating System Version Id
+     * @param int $osVersionId
      * @return $this
      * @throws InvalidArgumentException
      */
-    public function setOsName($osName)
+    public function setOsName($osVersionId)
     {
-        if(!is_string($osName)){
-            throw new InvalidArgumentException('Server Operating System Name is not a string');
-        }
-        $this->_osName = trim($osName);
-        return $this;
-    }
-
-    /**
-     * Get the Server Operating System Version
-     * @return string
-     */
-    public function getOsVersionCode()
-    {
-        return $this->_osVersionCode;
-    }
-
-    /**
-     * Set the Server Operating System Version
-     * @param string $osVersionCode
-     * @return $this
-     * @throws InvalidArgumentException
-     */
-    public function setOsVersionCode($osVersionCode)
-    {
-        if(!is_string($osVersionCode)){
-            throw new InvalidArgumentException('Server Operating System Version Code is not a string');
-        }
-        $this->_osVersionCode = trim($osVersionCode);
-        return $this;
-    }
-
-    /**
-     * Get the Server Operating System Version Reference
-     * @return string
-     */
-    public function getOsVersionName()
-    {
-        return $this->_osVersionName;
-    }
-
-    /**
-     * Set the Server Operating System Reference
-     * @param string $osVersionName
-     * @return $this
-     * @throws InvalidArgumentException
-     */
-    public function setOsVersionName($osVersionName)
-    {
-        if(!is_string($osVersionName)){
-            throw new InvalidArgumentException('Server Operating System Version Name is not a string');
-        }
-        $this->_osVersionName = trim($osVersionName);
+        self::_validateRequiredInt($osVersionId);
+        $this->_osVersionId = $osVersionId;
         return $this;
     }
 
@@ -286,10 +217,7 @@ class Server extends AbstractModel
      */
     public function setPassword($password)
     {
-        if (!is_string($password)) {
-            throw new InvalidArgumentException('Server Password is not a string');
-        }
-        $this->_password = trim($password);
+        self::_validateRequiredString($password);
         return $this;
     }
 
@@ -315,11 +243,9 @@ class Server extends AbstractModel
         $result['server_name'] = $this->_name;
         $result['ip'] = $this->_ip;
         $result['port'] = $this->_port;
-        $result['company'] = $this->_company;
         $result['description'] = $this->_description;
-        $result['os_name'] = $this->_osName;
-        $result['os_version_code'] = $this->_osVersionCode;
-        $result['os_version_name'] = $this->_osVersionName;
+        $result['company_id'] = $this->_companyId;
+        $result['os_version_id'] = $this->_osVersionId;
         return $result;
     }
 }

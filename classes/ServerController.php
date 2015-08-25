@@ -26,7 +26,7 @@ class ServerController extends AbstractController
     public function getServers(){
         //ToDo: Consider pagination and sorting
         $params = array();
-        $sql = "SELECT `id` AS `_id`, `servername` AS `_name`, `ip` AS `_ip`, `company` AS `_company`, `OS` AS `_osName`, `version` AS `_osVersionCode`, `description` AS `_description`, `releasever` AS `_osVersionName` FROM `servers`";
+        $sql = "SELECT `id` AS `_id`, `name` AS `_name`, `ip` AS `_ip`, `port` AS `_port`, `description` AS `_description`, `company_id` AS `_companyId`, `os_version_id` AS `_osVersionId` FROM `server`";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
         return $statement->fetchAll(PDO::FETCH_CLASS, Server::class);
@@ -41,11 +41,12 @@ class ServerController extends AbstractController
      * @throws Exception
      */
     public function getServerByID($id){
-        if(!is_int($id)){
-            throw new InvalidArgumentException('Get Server: ID is invalid');
-        }
+        //Create new server object to and set id to get Exceptions for incorrect format
+        $server = new Server();
+        $server->setId($id);
+
         $params = array('server_id' => $id);
-        $sql = "SELECT `id` AS `_id`, `servername` AS `_name`, `ip` AS `_ip`, `company` AS `_company`, `OS` AS `_osName`, `version` AS `_osVersionCode`, `description` AS `_description`, `releasever` AS `_osVersionName` FROM `servers` WHERE `id` = :server_id";
+        $sql = "SELECT `id` AS `_id`, `name` AS `_name`, `ip` AS `_ip`, `port` AS `_port`, `description` AS `_description`, `company_id` AS `_companyId`, `os_version_id` AS `_osVersionId` FROM `server` WHERE `id` = :server_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
         if($statement->rowCount() !== 1){
@@ -63,14 +64,12 @@ class ServerController extends AbstractController
      * @throws Exception
      */
     public function getServerByIP($ip){
-        if(!is_string($ip)){
-            throw new InvalidArgumentException('Get Server: IP is invalid');
-        }
-        if(!filter_var($ip,FILTER_VALIDATE_IP)){
-            throw new InvalidArgumentException('Get Server: IP is not valid');
-        }
+        //Create new server object to and set id to get Exceptions for incorrect format
+        $server = new Server();
+        $server->setIp($ip);
+
         $params = array('server_ip' => $ip);
-        $sql = "SELECT `id` AS `_id`, `servername` AS `_name`, `ip` AS `_ip`, `company` AS `_company`, `OS` AS `_osName`, `version` AS `_osVersionCode`, `description` AS `_description`, `releasever` AS `_osVersionName` FROM `servers` WHERE `ip` = :server_ip";
+        $sql = "SELECT `id` AS `_id`, `name` AS `_name`, `ip` AS `_ip`, `port` AS `_port`, `description` AS `_description`, `company_id` AS `_companyId`, `os_version_id` AS `_osVersionId` FROM `server` WHERE `ip` = :server_ip";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
         if($statement->rowCount() !== 1){
@@ -88,12 +87,12 @@ class ServerController extends AbstractController
      */
     public function addServer(Server &$server){
         $params = $server->toArray();
-        $supported_keys = array('server_name', 'ip', 'company', 'os_name', 'os_version_code', 'description', 'os_version_name');
+        $supported_keys = array('server_name', 'ip', 'port', 'description', 'company_id', 'os_version_id');
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "INSERT INTO `servers` (`servername`, `ip`, `company`,`OS`, `version`, `description`, `releasever`)
-                VALUES (:server_name, :ip, :company, :os_name, :os_version_code, :description, :os_version_name";
+        $sql = "INSERT INTO `server` (`name`, `ip`, `port`, `description`, `company_id`,`os_version_id`)
+                VALUES (:server_name, :ip, :port, :description, :company_id, :os_version_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
@@ -109,18 +108,17 @@ class ServerController extends AbstractController
      */
     public function updateServer(Server &$server){
         $params = $server->toArray();
-        $supported_keys = array('server_id', 'server_name', 'ip', 'company', 'os_name', 'os_version_code', 'description', 'os_version_name');
+        $supported_keys = array('server_id', 'server_name', 'ip', 'port', 'description', 'company_id', 'os_version_id');
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "UPDATE `servers`
-                SET `servername` = :server_name,
+        $sql = "UPDATE `server`
+                SET `name` = :server_name,
                     `ip` = :ip,
-                    `company` = :company,
-                    `OS` = :os_name,
-                    `version` = :os_version_code,
+                    `port` = :port,
                     `description` = :description,
-                    `releasever` = :os_version_name
+                    `company_id` = :company_id,
+                    `os_version_id` = :os_version_id
                 WHERE `id` = :server_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
@@ -139,15 +137,11 @@ class ServerController extends AbstractController
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "DELETE FROM `packagesHist` WHERE `servers` = :server_id";
+        $sql = "DELETE FROM `package_update` INNER JOIN `server` ON `package_update`.`server_id` = `server`.`id` WHERE `server`.`id` = :server_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
-        $sql = "DELETE FROM `packages` WHERE `servers` = :server_id";
-        $statement = $this->getDbConnection()->prepare($sql);
-        $statement->execute($params);
-
-        $sql = "DELETE FROM `servers` WHERE `id` = :server_id";
+        $sql = "DELETE FROM `server` WHERE `id` = :server_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
     }

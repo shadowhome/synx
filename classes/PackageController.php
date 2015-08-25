@@ -22,10 +22,57 @@ class PackageController extends AbstractController
     public function getPackages(){
         //ToDo: Consider pagination and sorting
         $params = array();
-        $sql = "SELECT `id` AS `_id`, `servername` AS `_name`, `ip` AS `_ip`, `company` AS `_company`, `OS` AS `_osName`, `version` AS `_osVersionCode`, `description` AS `_description`, `releasever` AS `_osVersionName` FROM `servers`";
+        $sql = "SELECT `id` AS `_id`, `name` AS `_name` FROM `package`";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
         return $statement->fetchAll(PDO::FETCH_CLASS, Package::class);
+    }
+
+
+    /**
+     * Get an instance of the package based upon the package ID
+     * @param int $id
+     * @return Package
+     * @throws PDOException
+     * @throws InvalidArgumentException
+     * @throws Exception
+     */
+    public function getPackageByID($id){
+        //Create new package object to and set id to get Exceptions for incorrect format
+        $package = new Package();
+        $package->setId($id);
+
+        $params = array('package_id' => $package->getId());
+        $sql = "SELECT `id` AS `_id`, `name` AS `_name` FROM `package` WHERE `id` = :package_id";
+        $statement = $this->getDbConnection()->prepare($sql);
+        $statement->execute($params);
+        if($statement->rowCount() !== 1){
+            throw new Exception(Package::class.' cannot be found, check the ID is valid');
+        }
+        return $statement->fetchObject(Package::class);
+    }
+
+    /**
+     * Get an instance of the package based upon the package Name
+     * @param string $name
+     * @return Package
+     * @throws PDOException
+     * @throws InvalidArgumentException
+     * @throws Exception
+     */
+    public function getPackageByName($name){
+        //Create new package object to and set name to get Exceptions for incorrect format
+        $package = new Package();
+        $package->setName($name);
+
+        $params = array('package_name' => $package->getName());
+        $sql = "SELECT `id` AS `_id`, `name` AS `_name` FROM `package` WHERE `name` = :package_name";
+        $statement = $this->getDbConnection()->prepare($sql);
+        $statement->execute($params);
+        if($statement->rowCount() !== 1){
+            throw new Exception(Package::class.' cannot be found, check the Name is valid');
+        }
+        return $statement->fetchObject(Package::class);
     }
 
     /**
@@ -37,12 +84,12 @@ class PackageController extends AbstractController
      */
     public function addPackage(Package &$package){
         $params = $package->toArray();
-        $supported_keys = array('package_name', 'is_upgrade', 'is_security', 'changelog', 'server_id', 'current_version_code', 'new_version_code', 'install_date', 'md5', 'is_installed', 'is_removed');
+        $supported_keys = array('package_name');
+
         self::filterParams($params,$supported_keys);
 
-
-        $sql = "INSERT INTO `packages` (`package`, `security`, `upgrade`,`servers`, `changelog`, `date`, `md5`, `version`, `nversion`, `ii`, `rc`)
-                VALUES (:package_name, :is_security, :is_upgrade, :server_id, :changelog, :install_date, :md5, :current_version_code, :new_version_code, :is_installed, :is_removed";
+        $sql = "INSERT INTO `package` (`name`)
+                VALUES (:package_name)";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
@@ -58,29 +105,19 @@ class PackageController extends AbstractController
      */
     public function updatePackage(Package &$package){
         $params = $package->toArray();
-        $supported_keys = array('package_id', 'package_name', 'is_upgrade', 'is_security', 'changelog', 'server_id', 'current_version_code', 'new_version_code', 'install_date', 'md5', 'is_installed', 'is_removed');
+        $supported_keys = array('package_id', 'package_name');
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "UPDATE `packages`
-                SET `package` = :package_name,
-                    `security` = :is_security,
-                    `upgrade` = :upgrade,
-                    `servers` = :server_id,
-                    `changelog` = :changelog,
-                    `date` = :install_date,
-                    `md5` = :md5,
-                    `version` = :current_version_code,
-                    `nversion` = :new_version_code,
-                    `li` = :is_installed,
-                    `rc` = :is_removed
+        $sql = "UPDATE `package`
+                SET `name` = :package_name
                 WHERE `id` = :package_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
     }
 
     /**
-     * Remove Package From DB
+     * Remove Package from DB
      * @param Package $package
      * @throws InvalidArgumentException
      * @throws PDOException
@@ -92,7 +129,15 @@ class PackageController extends AbstractController
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "DELETE FROM `packages` WHERE `packages` = :package_id";
+        $sql = "DELETE FROM `package_update` INNER JOIN `package_version` ON `package_update`.`package_version_id` = `package_version`.`id` INNER JOIN `package` ON `package_version`.`package_id` = `package`.`id` WHERE `package`.`id` = :package_id";
+        $statement = $this->getDbConnection()->prepare($sql);
+        $statement->execute($params);
+
+        $sql = "DELETE FROM `package_version` INNER JOIN `package` ON `package_version`.`package_id` = `package`.`id` WHERE `package`.`id` = :package_id";
+        $statement = $this->getDbConnection()->prepare($sql);
+        $statement->execute($params);
+
+        $sql = "DELETE FROM `package` WHERE `id` = :package_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
     }
