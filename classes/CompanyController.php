@@ -7,6 +7,7 @@
 namespace Synx\Controller;
 
 include_once 'AbstractController.php';
+include_once 'Company.php';
 
 use Synx\Model\Company;
 use PDO;

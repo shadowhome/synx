@@ -3,15 +3,24 @@
 include 'inc/html/header.php';
 include 'inc/upconfig.php';
 
-$servers = 'SELECT * from servers ORDER BY servername';
+//ToDo: Change Classes to autoload
+include __DIR__.'/classes/ServerController.php';
+include __DIR__.'/classes/CompanyController.php';
+include __DIR__.'/classes/OperatingSystemController.php';
+include __DIR__.'/classes/OperatingSystemVersionController.php';
 
-// Create connection
-$conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
-// Check connection
-if (!$conn) {
-	die("Connection failed: " . mysqli_connect_error());
-}
-$result = $conn->query($servers);
+use Synx\Controller\ServerController;
+use Synx\Controller\CompanyController;
+use Synx\Controller\OperatingSystemController;
+use Synx\Controller\OperatingSystemVersionController;
+
+$serverController = new ServerController();
+$companyController = new CompanyController();
+$operatingSystemController = new OperatingSystemController();
+$operatingSystemVersionController = new OperatingSystemVersionController();
+
+$servers = $serverController->getServers();
+
 ?>
 
     <script type="text/javascript">
@@ -43,27 +52,33 @@ $result = $conn->query($servers);
 			</thead>
 			<tbody>
 			<?php
-			if ($result->num_rows > 0) { ?>
-				<?php while($row = $result->fetch_assoc()) { ?>
-					<tr>
-						<td><?php echo $row["id"]; ?></td>
-						<td><a href="Servers.php?id=<?php echo $row['id']; ?>#server<?php echo $row['id']; ?>"><?php echo $row["servername"]; ?></a></td>
-						<td><?php echo $row["ip"]; ?></td>
-						<td><?php echo $row["company"]; ?></td>
-						<td><?php echo $row["OS"]; ?></td>
-						<td><?php echo $row["version"]; ?></td>
-						<td><?php echo $row["releasever"]; ?></td>
-						<td><?php echo $row["description"]; ?></td>
-					</tr>
-				<?php } ?>
-			<?php } else {
-					echo "<tr>0 results</tr>";
-				}
+			if (!empty($servers)):
+				foreach($servers as $server):
+					$company = $companyController->getCompanyById($server->getCompanyId());
+					$operatingSystemVersion = $operatingSystemVersionController->getOperatingSystemVersionByID($server->getOsVersionId());
+					$operatingSystem = $operatingSystemController->getOperatingSystemByID($operatingSystemVersion->getOsId());
+			?>
+				<tr>
+					<td><?php echo $server->getId(); ?></td>
+					<td><a href="Servers.php?id=<?php echo $server->getId(); ?>#server<?php echo $server->getId(); ?>"><?php echo $server->getName(); ?></a></td>
+					<td><?php echo $server->getIp(); ?></td>
+					<td><?php echo $company->getName(); ?></td>
+					<td><?php echo $operatingSystem->getName(); ?></td>
+					<td><?php echo $operatingSystemVersion->getName(); ?></td>
+					<td><?php echo $operatingSystemVersion->getCode(); ?></td>
+					<td><?php echo $server->getDescription(); ?></td>
+				</tr>
+			<?php
+				endforeach;
+			else:
+			?>
+				<tr>
+					<td colspan="8">No Results Found</td>
+				</tr>
+			<?php
+			endif;
 			?>
 			</tbody>
-			<?php
-				$conn->close();
-			?>
 		</table>
 	</div>
 
