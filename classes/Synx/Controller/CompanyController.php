@@ -130,15 +130,15 @@ class CompanyController extends AbstractController
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "DELETE FROM `package_update` INNER JOIN `server` ON `package_update`.`server_id` = `server`.`id` INNER JOIN `company` ON `server`.`company_id` = `company`.`id` WHERE `company`.`id` = :company_id";
+        $sql = "DELETE `package_update`.* FROM `package_update` INNER JOIN `server` ON `package_update`.`server_id` = `server`.`id` INNER JOIN `company` ON `server`.`company_id` = `company`.`id` WHERE `company`.`id` = :company_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
-        $sql = "DELETE FROM `server` INNER JOIN `company` ON `server`.`company_id` = `company`.`id` WHERE `company`.`id` = :company_id";
+        $sql = "DELETE `server`.* FROM `server` INNER JOIN `company` ON `server`.`company_id` = `company`.`id` WHERE `company`.`id` = :company_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
-        $sql = "DELETE FROM `company` WHERE `id` = :company_id";
+        $sql = "DELETE `company`.* FROM `company` WHERE `id` = :company_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
     }

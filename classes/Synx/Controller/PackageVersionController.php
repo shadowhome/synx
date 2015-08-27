@@ -134,11 +134,11 @@ class PackageVersionController extends AbstractController
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "DELETE FROM `package_update` INNER JOIN `package_version` ON `package_update`.`package_version_id` = `package_version`.`id` WHERE `package_version`.`id` = :package_version_id";
+        $sql = "DELETE `package_update`.* FROM `package_update` INNER JOIN `package_version` ON `package_update`.`package_version_id` = `package_version`.`id` WHERE `package_version`.`id` = :package_version_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
-        $sql = "DELETE FROM `package_version` WHERE `package_version`.`id` = :package_version_id";
+        $sql = "DELETE `package_version`.* FROM `package_version` WHERE `package_version`.`id` = :package_version_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
     }

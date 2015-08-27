@@ -130,19 +130,19 @@ class OperatingSystemController extends AbstractController
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "DELETE FROM `package_update` INNER JOIN `server` ON `package_update`.`server_id` = `server`.`id` INNER JOIN `operating_system_version` ON `server`.`os_version_id` = `operating_system_version`.`id` INNER JOIN `operating_system` ON `operating_system_version`.`os_id` = `operating_system`.`id` WHERE `operating_system`.`id` = :os_id";
+        $sql = "DELETE `package_update`.* FROM `package_update` INNER JOIN `server` ON `package_update`.`server_id` = `server`.`id` INNER JOIN `operating_system_version` ON `server`.`os_version_id` = `operating_system_version`.`id` INNER JOIN `operating_system` ON `operating_system_version`.`os_id` = `operating_system`.`id` WHERE `operating_system`.`id` = :os_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
-        $sql = "DELETE FROM `server` INNER JOIN `operating_system_version` ON `server`.`os_version_id` = `operating_system_version`.`id` INNER JOIN `operating_system` ON `operating_system_version`.`os_id` = `operating_system`.`id` WHERE `operating_system`.`id` = :os_id";
+        $sql = "DELETE `server`.* FROM `server` INNER JOIN `operating_system_version` ON `server`.`os_version_id` = `operating_system_version`.`id` INNER JOIN `operating_system` ON `operating_system_version`.`os_id` = `operating_system`.`id` WHERE `operating_system`.`id` = :os_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
-        $sql = "DELETE FROM `operating_system_version` INNER JOIN `operating_system` ON `operating_system_version`.`os_id` = `operating_system`.`id` WHERE `operating_system`.`id` = :os_id";
+        $sql = "DELETE `operating_system_version`.* FROM `operating_system_version` INNER JOIN `operating_system` ON `operating_system_version`.`os_id` = `operating_system`.`id` WHERE `operating_system`.`id` = :os_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
-        $sql = "DELETE FROM `operating_system` WHERE `id` = :os_id";
+        $sql = "DELETE `operating_system`.* FROM `operating_system` WHERE `id` = :os_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
     }

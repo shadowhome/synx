@@ -127,15 +127,15 @@ class PackageController extends AbstractController
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "DELETE FROM `package_update` INNER JOIN `package_version` ON `package_update`.`package_version_id` = `package_version`.`id` INNER JOIN `package` ON `package_version`.`package_id` = `package`.`id` WHERE `package`.`id` = :package_id";
+        $sql = "DELETE `package_update`.* FROM `package_update` INNER JOIN `package_version` ON `package_update`.`package_version_id` = `package_version`.`id` INNER JOIN `package` ON `package_version`.`package_id` = `package`.`id` WHERE `package`.`id` = :package_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
-        $sql = "DELETE FROM `package_version` INNER JOIN `package` ON `package_version`.`package_id` = `package`.`id` WHERE `package`.`id` = :package_id";
+        $sql = "DELETE `package_version`.* FROM `package_version` INNER JOIN `package` ON `package_version`.`package_id` = `package`.`id` WHERE `package`.`id` = :package_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
-        $sql = "DELETE FROM `package` WHERE `id` = :package_id";
+        $sql = "DELETE `package`.* FROM `package` WHERE `id` = :package_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
     }

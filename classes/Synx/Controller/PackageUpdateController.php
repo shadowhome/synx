@@ -107,7 +107,7 @@ class PackageUpdateController extends AbstractController
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "DELETE FROM `package_update` WHERE `package_update`.`id` = :package_update_id";
+        $sql = "DELETE `package_update`.* FROM `package_update` WHERE `package_update`.`id` = :package_update_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
     }
