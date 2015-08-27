@@ -6,9 +6,6 @@
  */
 namespace Synx\Controller;
 
-include_once 'AbstractController.php';
-include_once 'OperatingSystemVersion.php';
-
 use Synx\Model\OperatingSystem;
 use Synx\Model\OperatingSystemVersion;
 use PDO;

@@ -1,50 +1,69 @@
 <?php
-include 'inc/upconfig.php';
+include 'inc/autoloader.php';
 include 'inc/functions.php';
 //Include a generic header
 include 'inc/html/header.php';
 
-//ToDo: Change Classes to autoload
-include __DIR__.'/classes/Server.php';
-include __DIR__.'/classes/ServerController.php';
+use Synx\Controller\ServerController;
+use Synx\Controller\CompanyController;
+use Synx\Controller\OperatingSystemController;
+use Synx\Controller\OperatingSystemVersionController;
 
-$sshp = mysqli_real_escape_string($link, $_REQUEST['sshp']);
+use Synx\Exception\EmptyResultException;
 
-
-
-
-//$OS = mysqli_real_escape_string($link, $_POST['OS']);
-//$lsbresult   = array();
-//$lsbcmd    = exec("ssh root@$ip 'lsb_release -as'",$lsbresult );
-//print_r(exec("ssh root@$ip 'lsb_release -as'",$lsbresult ));
-//$response = array();
-//print_r($lsbresult);
+use Synx\Model\Company;
 
 $serverController = new ServerController();
+$companyController = new CompanyController();
+$operatingSystemController = new OperatingSystemController();
+$operatingSystemVersionController = new OperatingSystemVersionController();
 
-//ToDo: verify server does not already exist
-$server = new Server();
-$server	->setName($_REQUEST['servername'])
-		->setIP($_REQUEST['ip'])
-		->setCompany($_REQUEST['company'])
-		->setPassword($_REQUEST['pass'])
-		->setDescription($_POST['description']);
+$error_msg = array();
 
-//$version = mysqli_real_escape_string($link, $_POST['version']);
+$company = null;
 
-$description = mysqli_real_escape_string($link, $_POST['description']);
-
-$sql = "INSERT INTO servers (servername,ip,company,OS,version,description,releasever,sshp) VALUES ('$servername','$ip','$company','$OS','$version','$description','$releasever','$sshp')";
-
-	if (mysqli_query($link, $sql)) {
-		echo "New Server created successfully";
-		//header( "Location: index.php" );
-	} else {
-		echo "Error: " . $sql . "<br>" . mysqli_error($link);
-		die("Server already exists");
+try {
+	try {
+		$company = $companyController->getCompanyByName($_REQUEST['company']);
+	} catch (EmptyResultException $e){
+		$company = new Company();
+		$company->setName($_REQUEST['company']);
+		$companyController->addCompany($company);
 	}
+}catch (PDOException $e){
+	$error_msg[] = 'An Error occurred whilst interacting the database.';
+}catch (InvalidArgumentException $e){
+	$error_msg[] = 'Please enter a valid company name';
+}catch (Exception $e){
+	$error_msg[] = 'Something went wrong checking the company';
+}
 
-$serverController->addServer($server);
+$server = null;
+try {
+	$server = new \Synx\Model\Server();
+	$server
+		->setName($_REQUEST['servername'])
+		->setIp($_REQUEST['ip'])
+		->setCompanyId($company->getId())
+		->setDescription($_REQUEST['description']);
+	if(isset($_REQUEST['sshp']) && $_REQUEST['sshp']){
+		$server->setPort($_REQUEST['sshp']);
+	}
+	if(isset($_REQUEST['pass']) && $_REQUEST['pass']){
+		$server->setPassword($_REQUEST['pass']);
+	}
+	$serverController->checkOperatingSystem($server);
+	$serverController->addServer($server);
+}catch (PDOException $e){
+	$error_msg[] = 'An Error occurred whilst interacting the database.';
+}catch (InvalidArgumentException $e){
+	$error_msg[] = $e->getMessage();
+}catch (Exception $e){
+	$error_msg[] = "Something went wrong checking the company:\n".$e->getMessage();
+}
+
+print_r($error_msg);
+exit;
 
 $who = getenv('USERNAME') ?: getenv('USER');
 
@@ -102,4 +121,3 @@ mysqli_close($link);
 
 	//Include a generic footer
 	include 'inc/html/footer.php';
-?>

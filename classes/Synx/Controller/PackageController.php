@@ -6,8 +6,6 @@
  */
 namespace Synx\Controller;
 
-include_once 'AbstractController.php';
-
 use Synx\Model\Package;
 
 class PackageController extends AbstractController

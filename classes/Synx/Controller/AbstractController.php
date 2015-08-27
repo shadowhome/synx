@@ -20,7 +20,11 @@ abstract class AbstractController{
      * @throws PDOException
      */
     protected function getDbConnection(){
-        require __DIR__.'/../inc/upconfig.php';
+        $config_path = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'inc'.DIRECTORY_SEPARATOR.'upconfig.php';
+        $config_path = realpath($config_path);
+
+        //ToDo: Error handling for when config not setup
+        require $config_path;
 
         if(isset($this->_connection)){
             return $this->_connection;

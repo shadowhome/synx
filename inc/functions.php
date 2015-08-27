@@ -15,7 +15,7 @@ function updateOsVersion(\Synx\Model\Server &$server)
 	try {
 		$output = array();
 		if ($server->isPasswordSet()) {
-			$connection = ssh2_connect($server->getIp(), 22);
+			$connection = ssh2_connect($server->getIp(), $server->getPort());
 			echo ssh2_auth_password($connection, 'root', $server->getPassword()) ? 'success' : 'fail';
 			$cmd = "lsb_release -as";
 			$stream = ssh2_exec($connection, $cmd);

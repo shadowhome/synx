@@ -7,8 +7,6 @@
 
 namespace Synx\Model;
 
-include_once 'AbstractModel.php';
-
 use InvalidArgumentException;
 use Exception;
 

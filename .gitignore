@@ -4,3 +4,5 @@ inc/upconfig.php
 .project
 master
 .DS_Store
+ssh_keys/*
+.idea

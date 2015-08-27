@@ -1,13 +1,9 @@
 <?php
+include '../inc/autoloader.php';
 //Include a generic header
-include 'inc/html/header.php';
-include 'inc/upconfig.php';
-
-//ToDo: Change Classes to autoload
-include __DIR__.'/classes/ServerController.php';
-include __DIR__.'/classes/CompanyController.php';
-include __DIR__.'/classes/OperatingSystemController.php';
-include __DIR__.'/classes/OperatingSystemVersionController.php';
+include '../inc/html/header.php';
+include '../inc/upconfig.php';
+include '../inc/functions.php';
 
 use Synx\Controller\ServerController;
 use Synx\Controller\CompanyController;
@@ -381,4 +377,4 @@ $servers = $serverController->getServers();
 </div>
 <?php
 	//Include a generic footer
-	include 'inc/html/footer.php';
+	include '../inc/html/footer.php';

@@ -6,9 +6,8 @@
  */
 namespace Synx\Controller;
 
-include_once 'AbstractController.php';
-
 use Synx\Model\Package;
+use Synx\Model\PackageVersion;
 
 class PackageVersionController extends AbstractController
 {

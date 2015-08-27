@@ -6,9 +6,8 @@
  */
 namespace Synx\Controller;
 
-include_once 'AbstractController.php';
-include_once 'Server.php';
-
+use Synx\Exception\EmptyResultException;
+use Synx\Model\OperatingSystem;
 use Synx\Model\Server;
 use PDO;
 use InvalidArgumentException;
@@ -145,5 +144,82 @@ class ServerController extends AbstractController
         $sql = "DELETE FROM `server` WHERE `id` = :server_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
+    }
+
+    public function checkOperatingSystem(Server $server){
+        $methods = array();
+        if(!$server->isPasswordSet()){
+            $methods = array('hostkey', 'ssh-rsa');
+        }
+
+        @$connection = ssh2_connect($server->getIp(), $server->getPort(), $methods);
+        if(!($connection)){
+            throw new Exception("Unable to establish connection to server [".$server->getIp()."], please Check IP or if server is on and connected");
+        }
+
+        if(!$server->isPasswordSet()){
+            print_r($_SERVER);
+            print_r($_ENV);
+
+            print_r(getenv('HOME'));
+
+            $rsa_pub = realpath($_SERVER['HOME'].'/.ssh/id_rsa.pub');
+            $rsa = realpath($_SERVER['HOME'].'/.ssh/id_rsa');
+            //ToDo: Accept alternate user names
+            if(!ssh2_auth_pubkey_file($connection, 'sysad',$rsa_pub, $rsa)){
+                throw new Exception("Unable to establish connection to server [".$server->getIp()."] using Public Key");
+            }
+        }else{
+            if(!ssh2_auth_password($connection, 'root', $server->getPassword())) {
+                throw new Exception("Unable to establish connection to server [".$server->getIp()."] using Password");
+            }
+        }
+
+        $cmd="lsb_release -as";
+
+        $stream = ssh2_exec($connection, $cmd);
+        $errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
+        stream_set_blocking($errorStream, true);
+        stream_set_blocking($stream, true);
+
+        $response = stream_get_contents($stream);
+
+        fclose($errorStream);
+        fclose($stream);
+        fclose($rsa_pub);
+        fclose($rsa);
+        unset($connection);
+
+        $response = explode("\n", $response);
+        if(empty($response)) {
+            throw new EmptyResultException('No Operating System Info was returned for server ['.$server->getIp().']');
+        }
+
+        $operatingSystemController = new OperatingSystemController();
+        $operatingSystem = null;
+        try {
+            $operatingSystem = $operatingSystemController->getOperatingSystemByName($response[0]);
+        } catch (EmptyResultException $e){
+            $operatingSystem = new OperatingSystem();
+            $operatingSystem->setName($response[0]);
+            $operatingSystemController->addOperatingSystem($operatingSystem);
+        }
+
+        $operatingSystemVersionController = new OperatingSystemVersionController();
+        $operatingSystemVersion = null;
+        try {
+            $operatingSystemVersion = $operatingSystemVersionController->getOperatingSystemVersionByCode($response[2]);
+        } catch (EmptyResultException $e){
+            $operatingSystemVersion = new OperatingSystemVersion();
+            $operatingSystemVersion
+                ->setCode($response[2])
+                ->setName($response[3])
+                ->setOsId($operatingSystem->getId());
+            $operatingSystemVersionController->addOperatingSystemVersion($operatingSystemVersion);
+        }
+
+        $server->setOsVersionId($operatingSystemVersion->getOsVersionId());
+
+        //server not updated as it may need to be either added or updated..
     }
 }

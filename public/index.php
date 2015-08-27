@@ -1,6 +1,6 @@
 <?php
 	//Include a generic header
-	include 'inc/html/header.php';
+	include __DIR__.DIRECTORY_SEPARATOR.'../inc/html/header.php';
 ?>
 <div class="container">
 	<div class="page-header">
@@ -9,5 +9,5 @@
 </div>
 <?php
 	//Include a generic footer
-	include 'inc/html/footer.php';
+	include __DIR__.DIRECTORY_SEPARATOR.'../inc/html/footer.php';
 ?>

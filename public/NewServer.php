@@ -1,6 +1,6 @@
 <?php
 	//Include a generic header
-	include 'inc/html/header.php';
+	include '../inc/html/header.php';
 ?>
 <div class="container">
 	<div class="page-header">
@@ -17,7 +17,7 @@
 		</div>
 		<div class="form-group">
 			<label for="sshp">SSH Port</label>
-			<input type="text" class="form-control" id="sshp" name="sshp" placeholder="<?php echo '22';?>">
+			<input type="text" class="form-control" id="sshp" name="sshp" placeholder="22">
 		</div>
 		<div class="form-group">
 			<label for="company">Company</label>
@@ -59,5 +59,5 @@
 </div>
 <?php
 	//Include a generic footer
-	include 'inc/html/footer.php';
+	include '../inc/html/footer.php';
 ?>

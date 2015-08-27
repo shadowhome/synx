@@ -6,14 +6,11 @@
  */
 namespace Synx\Controller;
 
-include_once 'AbstractController.php';
-include_once 'Company.php';
-
 use Synx\Model\Company;
 use PDO;
 use InvalidArgumentException;
 use PDOException;
-use Exception;
+use Synx\Exception\EmptyResultException;
 
 class CompanyController extends AbstractController
 {
@@ -39,7 +36,7 @@ class CompanyController extends AbstractController
      * @return Company
      * @throws PDOException
      * @throws InvalidArgumentException
-     * @throws Exception
+     * @throws EmptyResultException
      */
     public function getCompanyByID($id){
         //Create new company object to and set id to get Exceptions for incorrect format
@@ -51,7 +48,7 @@ class CompanyController extends AbstractController
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
         if($statement->rowCount() !== 1){
-            throw new Exception(Company::class.' cannot be found, check the ID is valid');
+            throw new EmptyResultException(Company::class.' cannot be found, check the ID is valid');
         }
         return $statement->fetchObject(Company::class);
     }
@@ -62,7 +59,7 @@ class CompanyController extends AbstractController
      * @return Company
      * @throws PDOException
      * @throws InvalidArgumentException
-     * @throws Exception
+     * @throws EmptyResultException
      */
     public function getCompanyByName($name){
         //Create new company object to and set name to get Exceptions for incorrect format
@@ -74,7 +71,7 @@ class CompanyController extends AbstractController
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
         if($statement->rowCount() !== 1){
-            throw new Exception(Company::class.' cannot be found, check the Name is valid');
+            throw new EmptyResultException(Company::class.' cannot be found, check the Name is valid');
         }
         return $statement->fetchObject(Company::class);
     }

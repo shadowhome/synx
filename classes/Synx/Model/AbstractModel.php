@@ -25,11 +25,11 @@ abstract class AbstractModel
     protected final static function _validateRequiredString(&$string, $allowBlank = false)
     {
         if(!is_string($string)){
-            throw new InvalidArgumentException(self::class.' value is not a string');
+            throw new InvalidArgumentException(self::_getClassMethod().' is not a string');
         }
         $string = trim($string);
         if(!$string){
-            throw new InvalidArgumentException(self::class.' value is null.');
+            throw new InvalidArgumentException(self::_getClassMethod().' value is null.');
         }
     }
 
@@ -45,10 +45,10 @@ abstract class AbstractModel
             $int = (intval($int));
         }
         if(!is_int($int)){
-            throw new InvalidArgumentException(self::class.' value is not a int');
+            throw new InvalidArgumentException(self::_getClassMethod().' value is not a int');
         }
         if(!$int && !$allowZero){
-            throw new InvalidArgumentException(self::class.' value is zero.');
+            throw new InvalidArgumentException(self::_getClassMethod().' value is zero.');
         }
     }
 
@@ -60,14 +60,14 @@ abstract class AbstractModel
     protected final static function _validateRequiredIp(&$ip)
     {
         if(!is_string($ip)){
-            throw new InvalidArgumentException(self::class.' IP is not a string');
+            throw new InvalidArgumentException(self::_getClassMethod().' IP is not a string');
         }
         $ip = trim($ip);
         if(!$ip){
-            throw new InvalidArgumentException(self::class.' IP is null');
+            throw new InvalidArgumentException(self::_getClassMethod().' IP is null');
         }
         if(!filter_var($ip,FILTER_VALIDATE_IP)){
-            throw new InvalidArgumentException(self::class.' IP is not valid');
+            throw new InvalidArgumentException(self::_getClassMethod().' IP is not valid');
         }
     }
 
@@ -80,12 +80,32 @@ abstract class AbstractModel
     protected final static function _validateRequiredDate(&$date)
     {
         if(!is_string($date)){
-            throw new InvalidArgumentException(self::class.' Date is not a string');
+            throw new InvalidArgumentException(self::_getClassMethod().' Date is not a string');
         }
         $date = trim($date);
         if(!$date){
-            throw new InvalidArgumentException(self::class.' Date is null');
+            throw new InvalidArgumentException(self::_getClassMethod().' Date is null');
         }
         $date = date('Y-m-d', strtotime($date));
+    }
+
+    /**
+     * Internal Method, used for generating Class Field names for the exceptions generated in the _validate functions
+     * @return string
+     */
+    private final static function _getClassMethod(){
+        $class = get_called_class();
+        if($pos = strripos($class, '\\')){
+            $class = substr($class,$pos+1);
+        }
+
+        $callers=debug_backtrace();
+        $method = $callers[2]['function'];
+
+        if(stripos($method, 'get') === 0 || stripos($method, 'set') === 0){
+            $method = substr($method,3);
+        }
+
+        return $class.' '.$method;
     }
 }

@@ -6,8 +6,6 @@
  */
 namespace Synx\Model;
 
-include_once 'AbstractModel.php';
-
 use InvalidArgumentException;
 use Exception;
 
@@ -190,7 +188,7 @@ class Server extends AbstractModel
      * @return $this
      * @throws InvalidArgumentException
      */
-    public function setOsName($osVersionId)
+    public function setOsVersionId($osVersionId)
     {
         self::_validateRequiredInt($osVersionId);
         $this->_osVersionId = $osVersionId;
