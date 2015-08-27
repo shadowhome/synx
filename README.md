@@ -10,7 +10,9 @@ I wanted to create something to ease the task of having to manually go through m
 This is still very much in early stages and doesnt work properly as I envisage it as of this point
 
 Install:
+
 Requirements:
+
 webserver (nginx/apache)
 php5 (php5-fpm or mod-php5 for apache)
 php5-mysqlnd
