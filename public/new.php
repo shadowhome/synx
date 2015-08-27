@@ -1,8 +1,8 @@
 <?php
-include 'inc/autoloader.php';
-include 'inc/functions.php';
+include '../inc/autoloader.php';
+include '../inc/functions.php';
 //Include a generic header
-include 'inc/html/header.php';
+include '../inc/html/header.php';
 
 use Synx\Controller\ServerController;
 use Synx\Controller\CompanyController;
@@ -120,4 +120,4 @@ if ($_REQUEST['populate'] == 'yes') {
 mysqli_close($link);
 
 	//Include a generic footer
-	include 'inc/html/footer.php';
+	include '../inc/html/footer.php';
