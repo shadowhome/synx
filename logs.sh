@@ -42,12 +42,12 @@ logs () {
 
 	#Setup web server for access
 	if [ $webserver -ge 1 ];then
-        htpasswd -b -B -c /etc/nginx/htpasswd.users kib kibadmin
+        htpasswd -b -c /etc/nginx/htpasswd.users kib kibadmin
 	sed -i "/server_name/c\server_name $hostname;" src/nginx/kib
 	cp src/nginx/kib /etc/nginx/sites-enabled/kib
 	service nginx restart
 	else
-	htpasswd -b -B -c /etc/apache2/htpasswd.users kib kibadmin
+	htpasswd -b -c /etc/apache2/htpasswd.users kib kibadmin
 	sed -i "/ServerName/c\ServerName $hostname" src/nginx/kibap
 	cp src/nginx/kibap /etc/apache2/sites-enabled/
 	service apache2 restart
