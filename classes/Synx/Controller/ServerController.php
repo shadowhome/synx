@@ -137,11 +137,11 @@ class ServerController extends AbstractController
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "DELETE FROM `package_update` INNER JOIN `server` ON `package_update`.`server_id` = `server`.`id` WHERE `server`.`id` = :server_id";
+        $sql = "DELETE `package_update`.* FROM `package_update` INNER JOIN `server` ON `package_update`.`server_id` = `server`.`id` WHERE `server`.`id` = :server_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
-        $sql = "DELETE FROM `server` WHERE `id` = :server_id";
+        $sql = "DELETE `server`.* FROM `server` WHERE `id` = :server_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
     }
