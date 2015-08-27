@@ -57,8 +57,9 @@ logs () {
 	mkdir -p /etc/pki/tls/certs
 	mkdir /etc/pki/tls/private
 	cd /etc/pki/tls
-	sed -i "/\[ v3_ca \]/a\subjectAltName = IP: $IP" /etc/ssl/openssl.cnf
-	openssl req -config /etc/ssl/openssl.cnf -x509 -days 3650 -nodes -newkey rsa:2048 -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt
+	sed -i "/\[ v3_ca \]/a\subjectAltName = IP:$IP" src/openssl/openssl.cnf
+	openssl req -config src/openssl/openssl.cnf -x509 -days 3650 -nodes -newkey rsa:2048 -keyout /etc/pki/tls/private/logstash-forwarder.key -out /etc/pki/tls/certs/logstash-forwarder.crt
+	openssl req -config src/openssl/openssl.cnf -x509 -days 3650 -nodes -newkey rsa:2048 -keyout /etc/pki/tls/private/logstash-forwarder.key -out /etc/pki/tls/certs/logstash-forwarder.crt -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=$hostname"
 	service logstash restart
 
 	
