@@ -7,6 +7,12 @@ webserver=$(netstat -ntpl|grep 80|grep -c nginx)
 if [ ! -x /usr/bin/fail2ban-server ]; then
         apt-get -y install fail2ban
 fi
+if [ ! -x /usr/bin/sudo ]; then
+        apt-get -y install sudo
+fi
+if [ ! -x /usr/bin/htpasswd ]; then
+        apt-get -y install apache2-utils
+fi
 
 logs () {
         echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" > /etc/apt/sources.list.d/webupd8team-java.list
@@ -17,6 +23,8 @@ logs () {
         apt-get update
 
 	#Install tools elasticache java and logstash
+	echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+ 	echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
         export DEBIAN_FRONTEND=noninteractive; apt-get -y install oracle-java8-installer elasticsearch=1.4.4 logstash
         update-rc.d elasticsearch defaults 95 10
 	#Configure elasticache
@@ -49,7 +57,7 @@ logs () {
 	mkdir -p /etc/pki/tls/certs
 	mkdir /etc/pki/tls/private
 	cd /etc/pki/tls
-	sed -i "/[ v3_ca ]/a\subjectAltName = IP: $IP" /etc/ssl/openssl.cnf
+	sed -i "/\[ v3_ca \]/a\subjectAltName = IP: $IP" /etc/ssl/openssl.cnf
 	openssl req -config /etc/ssl/openssl.cnf -x509 -days 3650 -nodes -newkey rsa:2048 -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt
 	service logstash restart
 
