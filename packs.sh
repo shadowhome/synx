@@ -101,6 +101,28 @@ inst () {
 	printf "UPDATE Packages SET ii = 1 WHERE rc != 1;"|sudo sqlite3 $workdir/synx.db
 #fi
 }
+logs () {
+	echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" > /etc/apt/sources.list.d/webupd8team-java.list
+	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886
+	echo 'deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' | sudo tee /etc/apt/sources.list.d/elasticsearch.list
+	echo 'deb http://packages.elasticsearch.org/logstash/1.5/debian stable main' | sudo tee /etc/apt/sources.list.d/logstash.list
+	wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
+	apt-get update	
+	export DEBIAN_FRONTEND=noninteractive; apt-get -y install oracle-java8-installer elasticsearch=1.4.4 logstash 
+	update-rc.d elasticsearch defaults 95 10
+	sed -i '/network.host: /c\network.host: 127.0.0.1' /etc/elasticsearch/elasticsearch.yml
+	cd /opt/; wget https://download.elasticsearch.org/kibana/kibana/kibana-4.1.1-linux-x64.tar.gz
+	tar zxpvf kibana-4.1.1-linux-x64.tar.gz
+	ln -s kibana-4.1.1-linux-x64 kibana
+	cd /etc/init.d && sudo wget https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/bce61d85643c2dcdfbc2728c55a41dab444dca20/kibana4
+	chmod +x /etc/init.d/kibana4
+	update-rc.d kibana4 defaults 96 9
+	service kibana4 start	
+	htpasswd -c /etc/nginx/htpasswd.users bgeach
+	
+		
+	
+}
 all () {
 	inst
 	check
@@ -132,7 +154,9 @@ case "$1" in
 	hwstats)
 	    hwstats
 	    ;;
-
+	logs)
+	    logs
+	    ;;
         *)
             echo $"Usage: $0 {all|check|md5|changelog|inst}"
             exit 1

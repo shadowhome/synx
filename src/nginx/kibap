@@ -1,0 +1,17 @@
+<VirtualHost *:*>
+        ServerAdmin webmaster@localhost
+        ServerName example.com
+
+        DocumentRoot /var/www/manager
+
+        <Proxy *>
+            AuthType Basic
+            AuthName "Authentication Required"
+            AuthUserFile "/var/www/manager/htpasswd"
+            Require valid-user
+        </Proxy>
+
+        ProxyPass / http://localhost:5601/
+        ProxyPassReverse / http://localhost:5601/
+
+</VirtualHost>
