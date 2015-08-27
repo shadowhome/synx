@@ -4,6 +4,10 @@ IP=$(ifconfig eth0 | awk -F"[: ]+" '/inet addr:/ {print $4}')
 hostname=$(hostname -f)
 webserver=$(netstat -ntpl|grep 80|grep -c nginx)
 
+if [ ! -x /usr/bin/fail2ban-server ]; then
+        apt-get -y install fail2ban
+fi
+
 logs () {
         echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" > /etc/apt/sources.list.d/webupd8team-java.list
         apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886
