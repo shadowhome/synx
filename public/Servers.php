@@ -111,12 +111,12 @@ $servers = $serverController->getServers();
 
 	   
 	<?php
-	$conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
-	if (!$conn) {
-		die("Connection failed: " . mysqli_connect_error());
-	}
 	if(isset($_GET['id'])) {
-		$id          = $_GET['id'];
+		//ToDo: Exception Handling
+		$server = $serverController->getServerByID($_GET['id']);
+		$company = $companyController->getCompanyByID($server->getCompanyId());
+		$os_version = $operatingSystemVersionController->getOperatingSystemVersionByID($server->getOsVersionId());
+		$os = $operatingSystemController->getOperatingSystemByID($os_version->getOsId());
 
 		$updatesOnly = true;
 		$secOnly     = false;
@@ -129,39 +129,8 @@ $servers = $serverController->getServers();
 			$updatesOnly = false;
 		}
 
-		$sql = "SELECT  id, servername, ip, company, version, OS, description, releasever, sshp, CPUF,CPUArch,CPUNo,CPUSockets,CPUThreads,CPUC,RAM ".
-			   "FROM servers WHERE id = '$id'";
-
-		$result = mysqli_query($conn, $sql);
-		$row    = mysqli_fetch_array($result);
-
-		$packs  = "SELECT package, OS, version, upgrade, security, changelog, date, rc, ii, md5 ".
-				  "FROM packages ".
-				  "WHERE ".
-					"servers = '$id' ".
-					(($updatesOnly)?' AND upgrade="1"':'').
-					(($secOnly)?' AND security="1"':'');
-		
-		$resultp     = mysqli_query($conn, $packs);
-		$id          = $row['id'];
-		$servername  = $row['servername'];
-		$ip          = $row['ip'];
-		$company     = $row['company'];
-		$description = $row['description'];
-		$sshp        = $row['sshp']; 
-		$cpuf          	= $row['CPUF'];
-		$cpua  			= $row['CPUArch'];
-		$cpun          	= $row['CPUNo'];
-		$cpus	     	= $row['CPUSockets'];
-		$cput		 	= $row['CPUThreads'];
-		$cpuc		 	= $row['CPUC'];
-		$ram		 	= $row['RAM'];
-		
-
-		
-		
 		?>
-		<a name="server<?php echo $row['id'];?>" style="text-decoration: none; color: black;">
+		<a name="server<?php echo $server->getId();?>" style="text-decoration: none; color: black;">
 			<h1 style="text-align: center;">SERVER DETAILS</h1>
 		</a>
 
@@ -182,15 +151,15 @@ $servers = $serverController->getServers();
 				</thead>
 				<tbody>
 					<tr>
-						<td><?php echo $row["id"]; ?></td>
-						<td><?php echo $row["servername"]; ?></td>
-						<td><?php echo $row["ip"]; ?></td>
-						<td><?php echo $row["sshp"]; ?></td>
-						<td><?php echo $row["company"]; ?></td>
-						<td><?php echo $row["OS"]; ?></td>
-						<td><?php echo $row["version"]; ?></td>
-						<td><?php echo $row["releasever"]; ?></td>
-						<td><?php echo $row["description"]; ?></td>
+						<td><?php echo $server->getId(); ?></td>
+						<td><?php echo $server->getName(); ?></td>
+						<td><?php echo $server->getIp(); ?></td>
+						<td><?php echo $server->getPort(); ?></td>
+						<td><?php echo $company->getName(); ?></td>
+						<td><?php echo $os->getName(); ?></td>
+						<td><?php echo $os_version->getName(); ?></td>
+						<td><?php echo $os_version->getCode(); ?></td>
+						<td><?php echo $server->getDescription(); ?></td>
 					</tr>
 				</tbody>
 			</table>
@@ -212,13 +181,13 @@ $servers = $serverController->getServers();
 				</thead>
 				<tbody>
 					<tr>
-						<td><?php echo $cpun; ?></td>
-						<td><?php echo $cput; ?></td>
-						<td><?php echo $cpuc; ?></td>
-						<td><?php echo $cpuf; ?></td>
-						<td><?php echo $cpua; ?></td>
-						<td><?php echo $cpus; ?></td>
-						<td><?php echo $ram; ?></td>
+						<td><?php echo $server->getCpuNumber(); ?></td>
+						<td><?php echo $server->getCpuThreads(); ?></td>
+						<td><?php echo $server->getCpuCore(); ?></td>
+						<td><?php echo $server->getCpuFrequency(); ?></td>
+						<td><?php echo $server->getCpuArchitecture(); ?></td>
+						<td><?php echo $server->getCpuSockets(); ?></td>
+						<td><?php echo $server->getRam(); ?></td>
 
 					</tr>
 				</tbody>
@@ -234,15 +203,15 @@ $servers = $serverController->getServers();
 				<form action="new.php" method="post">
 				  <div class="form-group">
 				    <label for="servername">Server Name</label>
-				    <input type="text" class="form-control" id="servername" name="servername" value="<?php echo $servername;?>">
+				    <input type="text" class="form-control" id="servername" name="servername" value="<?php echo $server->getName();?>">
 				  </div>
 				  <div class="form-group">
 				    <label for="company">Company</label>
-				    <input type="text" class="form-control" id="company" name="company" value="<?php echo $company;?>">
+				    <input type="text" class="form-control" id="company" name="company" value="<?php echo $company->getName();?>">
 				  </div>
 				  <div class="form-group">
 				    <label for="description">Description</label>
-				    <textarea type="text" class="form-control" id="description" name="description" rows="5" cols="40"><?php echo $description;?></textarea>
+				    <textarea type="text" class="form-control" id="description" name="description" rows="5" cols="40"><?php echo $server->getDescription();?></textarea>
 				  </div>
 					<input class="btn btn-default" type="submit">
 				</form>    

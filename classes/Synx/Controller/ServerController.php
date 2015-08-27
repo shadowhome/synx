@@ -26,7 +26,22 @@ class ServerController extends AbstractController
     public function getServers(){
         //ToDo: Consider pagination and sorting
         $params = array();
-        $sql = "SELECT `id` AS `_id`, `name` AS `_name`, `ip` AS `_ip`, `port` AS `_port`, `description` AS `_description`, `company_id` AS `_companyId`, `os_version_id` AS `_osVersionId` FROM `server`";
+        $sql = "SELECT
+                    `id` AS `_id`,
+                    `name` AS `_name`,
+                    `ip` AS `_ip`,
+                    `port` AS `_port`,
+                    `description` AS `_description`,
+                    `company_id` AS `_companyId`,
+                    `os_version_id` AS `_osVersionId`,
+                    `ram` AS `_ram`,
+                    `cpu_frequency` AS `_cpuFrequency`,
+                    `cpu_architecture` AS `_cpuArchitecture`,
+                    `cpu_number` AS `_cpuNumber`,
+                    `cpu_sockets` AS `_cpuSockets`,
+                    `cpu_threads` AS `_cpuThreads`,
+                    `cpu_core` AS `_cpuCore`
+                FROM `server`";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
         return $statement->fetchAll(PDO::FETCH_CLASS, Server::class);
@@ -46,7 +61,23 @@ class ServerController extends AbstractController
         $server->setId($id);
 
         $params = array('server_id' => $id);
-        $sql = "SELECT `id` AS `_id`, `name` AS `_name`, `ip` AS `_ip`, `port` AS `_port`, `description` AS `_description`, `company_id` AS `_companyId`, `os_version_id` AS `_osVersionId` FROM `server` WHERE `id` = :server_id";
+        $sql = "SELECT
+                    `id` AS `_id`,
+                    `name` AS `_name`,
+                    `ip` AS `_ip`,
+                    `port` AS `_port`,
+                    `description` AS `_description`,
+                    `company_id` AS `_companyId`,
+                    `os_version_id` AS `_osVersionId`,
+                    `ram` AS `_ram`,
+                    `cpu_frequency` AS `_cpuFrequency`,
+                    `cpu_architecture` AS `_cpuArchitecture`,
+                    `cpu_number` AS `_cpuNumber`,
+                    `cpu_sockets` AS `_cpuSockets`,
+                    `cpu_threads` AS `_cpuThreads`,
+                    `cpu_core` AS `_cpuCore`
+                FROM `server`
+                WHERE `id` = :server_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
         if($statement->rowCount() !== 1){
@@ -69,7 +100,23 @@ class ServerController extends AbstractController
         $server->setIp($ip);
 
         $params = array('server_ip' => $ip);
-        $sql = "SELECT `id` AS `_id`, `name` AS `_name`, `ip` AS `_ip`, `port` AS `_port`, `description` AS `_description`, `company_id` AS `_companyId`, `os_version_id` AS `_osVersionId` FROM `server` WHERE `ip` = :server_ip";
+        $sql = "SELECT
+                    `id` AS `_id`,
+                    `name` AS `_name`,
+                    `ip` AS `_ip`,
+                    `port` AS `_port`,
+                    `description` AS `_description`,
+                    `company_id` AS `_companyId`,
+                    `os_version_id` AS `_osVersionId`,
+                    `ram` AS `_ram`,
+                    `cpu_frequency` AS `_cpuFrequency`,
+                    `cpu_architecture` AS `_cpuArchitecture`,
+                    `cpu_number` AS `_cpuNumber`,
+                    `cpu_sockets` AS `_cpuSockets`,
+                    `cpu_threads` AS `_cpuThreads`,
+                    `cpu_core` AS `_cpuCore`
+                FROM `server`
+                WHERE `ip` = :server_ip";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
         if($statement->rowCount() !== 1){
@@ -91,8 +138,8 @@ class ServerController extends AbstractController
 
         self::filterParams($params,$supported_keys);
 
-        $sql = "INSERT INTO `server` (`name`, `ip`, `port`, `description`, `company_id`,`os_version_id`)
-                VALUES (:server_name, :ip, :port, :description, :company_id, :os_version_id";
+        $sql = "INSERT INTO `server` (`name`, `ip`, `port`, `description`, `company_id`,`os_version_id`, `ram`, `cpu_frequency, `cpu_architecture`, `cpu_number`, `cpu_sockets`, `cpu_threads`, `cpu_core`)
+                VALUES (:server_name, :ip, :port, :description, :company_id, :os_version_id, :ram, :cpu_frequency, :cpu_architecture, :cpu_number, :cpu_sockets, :cpu_threads, :cpu_core)";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);
 
@@ -118,7 +165,14 @@ class ServerController extends AbstractController
                     `port` = :port,
                     `description` = :description,
                     `company_id` = :company_id,
-                    `os_version_id` = :os_version_id
+                    `os_version_id` = :os_version_id,
+                    `ram` AS `:ram`,
+                    `cpu_frequency` AS `:cpu_frequency`,
+                    `cpu_architecture` AS `:cpu_architecture`,
+                    `cpu_number` AS `:cpu_number`,
+                    `cpu_sockets` AS `:cpu_sockets`,
+                    `cpu_threads` AS `:cpu_threads`,
+                    `cpu_core` AS `:cpu_core`
                 WHERE `id` = :server_id";
         $statement = $this->getDbConnection()->prepare($sql);
         $statement->execute($params);

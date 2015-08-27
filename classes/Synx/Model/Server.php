@@ -11,14 +11,22 @@ use Exception;
 
 class Server extends AbstractModel
 {
+    const DEFAULT_PORT = 22;
     private $_id;
     private $_name;
     private $_ip;
-    private $_port = 22;
+    private $_port;
     private $_description = '';
     private $_password;
     private $_companyId;
     private $_osVersionId;
+    private $_ram;
+    private $_cpuFrequency;
+    private $_cpuArchitecture;
+    private $_cpuNumber;
+    private $_cpuSockets;
+    private $_cpuThreads;
+    private $_cpuCore;
 
     /**
      * Get the unique ID for the server
@@ -102,7 +110,7 @@ class Server extends AbstractModel
     public function getPort()
     {
         if(!$this->_port){
-            throw new Exception('Server Port has not been set');
+            return self::DEFAULT_PORT;
         }
         return $this->_port;
     }
@@ -224,6 +232,155 @@ class Server extends AbstractModel
     }
 
     /**
+     * Get the amount of RAM for the server
+     * @return int
+     */
+    public function getRam()
+    {
+        return $this->_ram;
+    }
+
+    /**
+     * Set the amount of RAM for the server
+     * @param int $ram
+     * @return Server
+     */
+    public function setRam($ram)
+    {
+        self::_validateRequiredInt($ram);
+        $this->_ram = $ram;
+        return $this;
+    }
+
+    /**
+     * Get the CPU Frequency for the server
+     * @return int
+     */
+    public function getCpuFrequency()
+    {
+        return $this->_cpuFrequency;
+    }
+
+    /**
+     * Set the CPU Frequency for the server
+     * @param int $cpuFrequency
+     * @return Server
+     */
+    public function setCpuFrequency($cpuFrequency)
+    {
+        self::_validateRequiredInt($cpuFrequency);
+        $this->_cpuFrequency = $cpuFrequency;
+        return $this;
+    }
+
+    /**
+     * Get the CPU Architecture
+     * @return string
+     */
+    public function getCpuArchitecture()
+    {
+        return $this->_cpuArchitecture;
+    }
+
+    /**
+     * Set the CPU Architecture
+     * @param string $cpuArchitecture
+     * @return Server
+     */
+    public function setCpuArchitecture($cpuArchitecture)
+    {
+        self::_validateRequiredString($cpuArchitecture);
+        $this->_cpuArchitecture = $cpuArchitecture;
+        return $this;
+    }
+
+    /**
+     * Get the CPU Number
+     * @return string
+     */
+    public function getCpuNumber()
+    {
+        return $this->_cpuNumber;
+    }
+
+    /**
+     * Set the CPU Number
+     * @param string $cpuNumber
+     * @return Server
+     */
+    public function setCpuNumber($cpuNumber)
+    {
+        self::_validateRequiredString($cpuNumber,true);
+        $this->_cpuNumber = $cpuNumber;
+        return $this;
+    }
+
+    /**
+     * Get the CPU Sockets
+     * @return string
+     */
+    public function getCpuSockets()
+    {
+        return $this->_cpuSockets;
+    }
+
+    /**
+     * Set the CPU Sockets
+     * @param string $cpuSockets
+     * @return Server
+     */
+    public function setCpuSockets($cpuSockets)
+    {
+        self::_validateRequiredString($cpuSockets, true);
+        $this->_cpuSockets = $cpuSockets;
+        return $this;
+    }
+
+    /**
+     * Get the CPU Threads
+     * @return string
+     */
+    public function getCpuThreads()
+    {
+        return $this->_cpuThreads;
+    }
+
+    /**
+     * Set the CPU Threads
+     * @param string $cpuThreads
+     * @return Server
+     */
+    public function setCpuThreads($cpuThreads)
+    {
+        self::_validateRequiredString($cpuThreads, true);
+        $this->_cpuThreads = $cpuThreads;
+        return $this;
+    }
+
+    /**
+     * Get the CPU Core
+     * @return string
+     */
+    public function getCpuCore()
+    {
+        return $this->_cpuCore;
+    }
+
+    /**
+     * Set the CPU Core
+     * @param string $cpuCore
+     * @return Server
+     */
+    public function setCpuCore($cpuCore)
+    {
+        self::_validateRequiredString($cpuCore, true);
+        $this->_cpuCore = $cpuCore;
+        return $this;
+    }
+
+
+
+    /**
      * Return Simple Format for displaying server info
      * @return string
      */
@@ -244,6 +401,14 @@ class Server extends AbstractModel
         $result['description'] = $this->_description;
         $result['company_id'] = $this->_companyId;
         $result['os_version_id'] = $this->_osVersionId;
+        $result['ram'] = $this->_ram;
+        $result['cpu_frequency'] = $this->_cpuFrequency;
+        $result['cpu_architecture'] = $this->_cpuArchitecture;
+        $result['cpu_number'] = $this->_cpuNumber;
+        $result['cpu_sockets'] = $this->_cpuSockets;
+        $result['cpu_threads'] = $this->_cpuThreads;
+        $result['cpu_core'] = $this->_cpuCore;
+
         return $result;
     }
 }

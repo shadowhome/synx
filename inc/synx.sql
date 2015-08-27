@@ -183,14 +183,15 @@ DROP TABLE IF EXISTS `server`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `server` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
   `ip` varchar(30) NOT NULL,
-  `company_id` int(10) unsigned NOT NULL,
+  `port` smallint(5) UNSIGNED DEFAULT NULL,
+  `company_id` int(10) UNSIGNED NOT NULL,
   `description` varchar(120) DEFAULT NULL,
   `os_version_id` int(10) unsigned NOT NULL,
-  `ram` int(10) DEFAULT NULL,
-  `cpu_frequency` int(10) DEFAULT NULL,
+  `ram` int(10) UNSIGNED DEFAULT NULL,
+  `cpu_frequency` int(10) UNSIGNED DEFAULT NULL,
   `cpu_architecture` varchar(10) DEFAULT NULL,
   `cpu_number` varchar(10) DEFAULT NULL,
   `cpu_sockets` varchar(10) DEFAULT NULL,
