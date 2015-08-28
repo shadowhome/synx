@@ -43,22 +43,22 @@ logs () {
 	#Setup web server for access
 	if [ $webserver -ge 1 ];then
         htpasswd -b -c /etc/nginx/htpasswd.users kib kibadmin
-	sed -i "/server_name/c\server_name $hostname;" src/nginx/kib
-	cp src/nginx/kib /etc/nginx/sites-enabled/kib
+	sed -i "/server_name/c\server_name $hostname;" $dir/src/nginx/kib
+	cp $dir/src/nginx/kib /etc/nginx/sites-enabled/kib
 	service nginx restart
 	else
 	htpasswd -b -c /etc/apache2/htpasswd.users kib kibadmin
-	sed -i "/ServerName/c\ServerName $hostname" src/nginx/kibap
-	cp src/nginx/kibap /etc/apache2/sites-enabled/
+	sed -i "/ServerName/c\ServerName $hostname" $dir/src/nginx/kibap
+	cp $dir/src/nginx/kibap /etc/apache2/sites-enabled/
 	service apache2 restart
 	fi
 	
 	#Config logstash
-	cp -r src/logstash/conf.d/* /etc/logstash/conf.d/
+	cp -r $dir/src/logstash/conf.d/* /etc/logstash/conf.d/
 	mkdir -p /etc/pki/tls/certs
 	mkdir /etc/pki/tls/private
 	cd /etc/pki/tls
-	sed -i "/\[ v3_ca \]/a\subjectAltName = IP:$IP" src/openssl/openssl.cnf
+	sed -i "/\[ v3_ca \]/a\subjectAltName = IP:$IP" $dir/src/openssl/openssl.cnf
 #	openssl req -config $dir/src/openssl/openssl.cnf -x509 -days 3650 -nodes -newkey rsa:2048 -keyout /etc/pki/tls/private/logstash-forwarder.key -out /etc/pki/tls/certs/logstash-forwarder.crt
 	openssl req -config $dir/src/openssl/openssl.cnf -x509 -days 3650 -nodes -newkey rsa:2048 -keyout /etc/pki/tls/private/logstash-forwarder.key -out /etc/pki/tls/certs/logstash-forwarder.crt -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=$hostname"
 	service logstash restart
