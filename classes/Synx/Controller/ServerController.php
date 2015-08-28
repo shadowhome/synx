@@ -13,9 +13,12 @@ use PDO;
 use InvalidArgumentException;
 use PDOException;
 use Exception;
+use Synx\Resource\ServerConnection;
 
 class ServerController extends AbstractController
 {
+    use ServerConnection;
+
     /**
      * Get an array of the servers
      * @return array
@@ -201,48 +204,9 @@ class ServerController extends AbstractController
     }
 
     public function checkOperatingSystem(Server $server){
-        $methods = array();
-        if(!$server->isPasswordSet()){
-            $methods = array('hostkey', 'ssh-rsa');
-        }
-
-        @$connection = ssh2_connect($server->getIp(), $server->getPort(), $methods);
-        if(!($connection)){
-            throw new Exception("Unable to establish connection to server [".$server->getIp()."], please Check IP or if server is on and connected");
-        }
-
-        if(!$server->isPasswordSet()){
-            print_r($_SERVER);
-            print_r($_ENV);
-
-            print_r(getenv('HOME'));
-
-            $rsa_pub = realpath($_SERVER['HOME'].'/.ssh/id_rsa.pub');
-            $rsa = realpath($_SERVER['HOME'].'/.ssh/id_rsa');
-            //ToDo: Accept alternate user names
-            if(!ssh2_auth_pubkey_file($connection, 'sysad',$rsa_pub, $rsa)){
-                throw new Exception("Unable to establish connection to server [".$server->getIp()."] using Public Key");
-            }
-        }else{
-            if(!ssh2_auth_password($connection, 'root', $server->getPassword())) {
-                throw new Exception("Unable to establish connection to server [".$server->getIp()."] using Password");
-            }
-        }
-
         $cmd="lsb_release -as";
 
-        $stream = ssh2_exec($connection, $cmd);
-        $errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
-        stream_set_blocking($errorStream, true);
-        stream_set_blocking($stream, true);
-
-        $response = stream_get_contents($stream);
-
-        fclose($errorStream);
-        fclose($stream);
-        fclose($rsa_pub);
-        fclose($rsa);
-        unset($connection);
+        $response = $this->runCommand($server, $cmd);
 
         $response = explode("\n", $response);
         if(empty($response)) {
