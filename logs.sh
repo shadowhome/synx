@@ -27,6 +27,25 @@ logs () {
 	echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
  	echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
         export DEBIAN_FRONTEND=noninteractive; apt-get -y install oracle-java8-installer elasticsearch=1.4.4 logstash
+	service elasticsearch stop
+	curl -XPUT http://localhost:9200/logstash-* -d '
+		{
+		"mappings" : {
+		"log" : {
+		"properties" : {
+		"geo" : {
+		"properties" : {
+		"coordinates" : {
+		"type" : "geo_point"
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+	';
+	service elasticsearch start
         update-rc.d elasticsearch defaults 95 10
 	#Configure elasticache
         sed -i '/network.host: /c\network.host: 127.0.0.1' /etc/elasticsearch/elasticsearch.yml
@@ -59,8 +78,14 @@ logs () {
 	mkdir /etc/pki/tls/private
 	cd /etc/pki/tls
 	sed -i "/\[ v3_ca \]/a\subjectAltName = IP:$IP" $dir/src/openssl/openssl.cnf
-#	openssl req -config $dir/src/openssl/openssl.cnf -x509 -days 3650 -nodes -newkey rsa:2048 -keyout /etc/pki/tls/private/logstash-forwarder.key -out /etc/pki/tls/certs/logstash-forwarder.crt
 	openssl req -config $dir/src/openssl/openssl.cnf -x509 -days 3650 -nodes -newkey rsa:2048 -keyout /etc/pki/tls/private/logstash-forwarder.key -out /etc/pki/tls/certs/logstash-forwarder.crt -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=$hostname"
+	cat << 'EOF' >>  /opt/logstash/patterns/nginx
+NGUSERNAME [a-zA-Z\.\@\-\+_%]+
+NGUSER %{NGUSERNAME}
+NGINXACCESS %{IPORHOST:clientip} %{NGUSER:ident} %{NGUSER:auth} \[%{HTTPDATE:timestamp}\] "%{WORD:verb} %{URIPATHPARAM:request} HTTP/%{NUMBER:httpversion}" %{NUMBER:response} (?:%{NUMBER:bytes}|-) (?:"(?:%{URI:referrer}|-)"|%{QS:referrer}) %{QS:agent}
+EOF
+	curl -O "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz" --output /etc/logstash/GeoLiteCity.dat.gz
+	cd /etc/logstash; gzip -d GeoLiteCity.dat.gz
 	service logstash restart
 
 	
