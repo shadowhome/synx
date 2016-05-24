@@ -9,11 +9,14 @@ fi
 if [ ! -x /usr/bin/sqlite3 ]; then
         apt-get -y install sqlite3
 fi
-
+if [ ! -x /usr/bin/sudo ]; then
+        apt-get -y install sudo
+fi
 #Create Work dir if not exist
 if [ ! -d /home/sysad/manage/ ]; then
         mkdir -p /home/sysad/manage/
 fi
+
 
 if [ ! -f /home/sysad/manage/synx.db ]; then
 	STRUCTURE="CREATE TABLE Packages (package TEXT,date TEXT, time TEXT, rc INT, ii INT, upgrade INT, security INT, changelog TEXT, cversion TEXT, nversion TEXT,md5 TEXT,cpua TEXT, cpu TEXT,cput TEXT, cpuc TEXT, cpuf TEXT, cpus TEXT, RAM TEXT);";
