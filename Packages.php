@@ -81,7 +81,7 @@ $result = $conn->query($sql);
 						<td><input type="checkbox" name="check-packages[]" value="<?php echo $row['id'];?>" class="check-packages" form="packages"/></td>
 						<td><?php echo $row["id"]; ?></td>
 					<!--  	<td><?php echo $row["package"]; ?></td> -->
-						<td><a href="Packages.php?PackS=<?php echo $row['package']; ?>#package<?php echo $row['package']; ?>"><?php echo $row["package"]; ?></a></td>
+						<td><a href="packages.php?PackS=<?php echo $row['package']; ?>#package<?php echo $row['package']; ?>"><?php echo $row["package"]; ?></a></td>
 						<td><?php echo $row["servername"]; ?></td>
 						<td><?php if ($row["upgrade"]==1) {
 				 				echo '<span class="glyphicon glyphicon-ok">&nbsp;</span>';
@@ -191,7 +191,7 @@ mysqli_close($conn);
 
 
 ?>
-<form id="packages" action='Packages.php' method='get'>
+<form id="packages" action='packages.php' method='get'>
     <p>What would you like to upgrade?</p>
     <p>
         <input type="submit" class="btn btn-default" name="Check" value="Updates">

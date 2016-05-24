@@ -62,8 +62,8 @@ print_r ($sshp);
 
 echo '<br/> <br/> <br/>';
 
-//echo "<form action='Upgrades.php' method='get'>";
-echo "<form id=\"packages\" action='Upgrades.php' method='get'>";
+//echo "<form action='upgrades.php' method='get'>";
+echo " action='uupgrades.php' method='get'>";
 $sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM Packages where upgrade = 1 AND servers = $id";
 if (isset($_GET['Sec'])) {
 	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM Packages where security = 1 AND servers = $id";

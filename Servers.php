@@ -43,11 +43,12 @@ $result = $conn->query($servers);
 			</thead>
 			<tbody>
 			<?php
-			if ($result->num_rows > 0) { ?>
+
+			if (!empty($result) && $result->num_rows > 0) { ?>
 				<?php while($row = $result->fetch_assoc()) { ?>
 					<tr>
 						<td><?php echo $row["id"]; ?></td>
-						<td><a href="Servers.php?id=<?php echo $row['id']; ?>#server<?php echo $row['id']; ?>"><?php echo $row["servername"]; ?></a></td>
+						<td><a href="servers.php?id=<?php echo $row['id']; ?>#server<?php echo $row['id']; ?>"><?php echo $row["servername"]; ?></a></td>
 						<td><?php echo $row["ip"]; ?></td>
 						<td><?php echo $row["company"]; ?></td>
 						<td><?php echo $row["OS"]; ?></td>
@@ -57,7 +58,7 @@ $result = $conn->query($servers);
 					</tr>
 				<?php } ?>
 			<?php } else {
-					echo "<tr>0 results</tr>";
+					echo '<tr><td colspan="8" class="alert-warning">0 results</td></tr>';
 				}
 			?>
 			</tbody>
@@ -69,10 +70,10 @@ $result = $conn->query($servers);
 
 	<div class="row">
 		<div class="col-md-6">
-			<h2><center><a href="NewServer.php" class="label label-primary">New Server</a></center></h2>
+			<h2><center><a href="new-server.php" class="label label-primary">New Server</a></center></h2>
 		</div>
 		<div class="col-md-6">
-			<h2><center><a href="DelServer.php" class="label label-danger">Delete Server</a></center></h2>
+			<h2><center><a href="del-server.php" class="label label-danger">Delete Server</a></center></h2>
 		</div>
 	</div>
 
@@ -84,7 +85,7 @@ $result = $conn->query($servers);
 			<p>You may search either by Servername or IP</p>
 		</div>
 		<div class="panel-body">
-		    <form method="post" action="Servers.php?go" id="searchform">
+		    <form method="post" action="servers.php?go" id="searchform">
 			  <div class="form-group">
 			    <label for="servername">Server Name</label>
 			    <input type="text" class="form-control" id="servername" name="servername" placeholder="Server Name">
@@ -253,28 +254,28 @@ $result = $conn->query($servers);
 				</form>
 			</div>
 			<div class="col-md-2" style="margin-bottom: 20px;">
-				<form action="Servers.php" method='get'>
+				<form action="servers.php" method='get'>
 					<input type="hidden" name=id value="<?php echo $id?>">
 					<input type="hidden" name="updates" value="1"/>
 					<input type="submit" class="btn btn-md btn-success" name="Check" value="Show updates only">
 				</form>
 			</div>
 			<div class="col-md-2" style="margin-bottom: 20px;">
-				<form action="Servers.php" method='get'>
+				<form action="servers.php" method='get'>
 					<input type="hidden" name=id value="<?php echo $id?>" />
 					<input type="hidden" name="updates" value="0" />
 					<input type="submit" class="btn btn-md btn-info" name="Check" value="Show All">
 				</form>
 			</div>
 			<div class="col-md-2" style="margin-bottom: 20px;">
-				<form action="Servers.php" method='get'>
+				<form action="servers.php" method='get'>
 					<input type="hidden" name=id value="<?php echo $id?>">
 					<input type="hidden" name="sec" value="1"/>
 					<input type="submit" class="btn btn-md btn-warning" name="Check" value="Show Security updates only">
 				</form>
 			</div>
 			<div class="col-md-2" style="margin-bottom: 20px;">
-				<form action="Upgrades.php" method='get'>
+				<form action="upgrades.php" method='get'>
 					<input type="hidden" name=id value="<?php echo $id?>">
 					<input type="hidden" name=servername value="<?php echo $servername?>">
 					<input type="hidden" name=ip value="<?php echo $ip?>">
@@ -353,7 +354,7 @@ $result = $conn->query($servers);
 	//   	$ID=$row['id'];
 	//   	//-display  the result of the array
 	//   	echo  "<ul>\n";
-	//   	echo  "<li>" . "<a  href=\"Servers.php?id=$ID\">"   .$servername . " " .  "</a></li>\n";
+	//   	echo  "<li>" . "<a  href=\"servers.php?id=$ID\">"   .$servername . " " .  "</a></li>\n";
 	//   	echo  "</ul>";
 	//   	
 	//  }

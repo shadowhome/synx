@@ -30,14 +30,14 @@ mysqli_close($conn);
 		<h1 style="text-align: center;">Delete?</h1>
 	</div>
 
-	<form action="DelServer.php" method="get">
+	<form action="del-server.php" method="get">
 	    <?php foreach($arrRows as $row) : ?>
 		    <input type="radio" name="server" value="<?php echo $row['id']; ?>" /> <?php echo $row['servername']; ?><br />
 	    <?php endforeach; ?>
 	    <br />
 	  <input class="btn btn-default" type="submit" value="submit" />
 	</form>
-	<a href="Servers.php" class="btn btn-lg btn-link" style="float: right;">Back to Servers</a>
+	<a href="servers.php" class="btn btn-lg btn-link" style="float: right;">Back to Servers</a>
 	<br /><br />
 </div>
 <?php
@@ -55,7 +55,7 @@ $sql2="DELETE FROM Packages WHERE Packages.servers=$server";
 if (mysqli_query($conn, $sql)&&mysqli_query($conn, $sql2)) {
 	echo "New record deleted successfully";
 	$serverid=mysqli_insert_id($conn);
-	header( "Location: Servers.php" );
+	header( "Location: servers.php" );
 } else {
 	echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 }
