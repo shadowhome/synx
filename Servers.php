@@ -125,11 +125,12 @@ $result = $conn->query($servers);
 		$row    = mysqli_fetch_array($result);
 
 		$packs  = "SELECT package, OS, version, upgrade, security, changelog, date, rc, ii, md5 ".
-				  "FROM packages ".
+				  "FROM Packages ".
 				  "WHERE ".
 					"servers = '$id' ".
 					(($updatesOnly)?' AND upgrade="1"':'').
 					(($secOnly)?' AND security="1"':'');
+		
 		
 		$resultp     = mysqli_query($conn, $packs);
 		$id          = $row['id'];
@@ -311,6 +312,7 @@ $result = $conn->query($servers);
 				</thead>
 				<tbody>
 				<?php	
+					
 					while($row1 = $resultp->fetch_assoc()) {
 						print '<tr>';
 						print '<td>'.$id;

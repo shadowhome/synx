@@ -12,17 +12,17 @@ if (!$conn) {
 	die("Connection failed: " . mysqli_connect_error());
 }
 
-$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM packages where upgrade = 1";
+$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM Packages where upgrade = 1";
 
 if (isset($_GET['Sec'])) {
-	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM packages where security = 1";
+	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM Packages where security = 1";
 	}
 elseif(isset($_GET['Check'])) {
-	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM packages where upgrade = 1";
+	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM Packages where upgrade = 1";
 	}
 elseif(isset($_GET['PackS'])) {
 	$pselect = $_GET['PackS'];
-	$sql = "SELECT package, id, version, nversion, servername, security, upgrade FROM packages WHERE package = '$pselect'";
+	$sql = "SELECT package, id, version, nversion, servername, security, upgrade FROM Packages WHERE package = '$pselect'";
 //	print_r($sql);
 	}
 
@@ -127,7 +127,7 @@ if(isset($_GET['Go'])){
 		
 		
 		//$sqln = "SELECT packages, servers.ip FROM packages INNER JOIN servers ON packages.servers = servers.id WHERE servers.servername = \"$servername\" AND packages.id = \"$secpack\"";
-		$sqln = "SELECT package, servers.ip, servers.sshp, packages.id FROM packages INNER JOIN servers ON packages.servers = servers.id WHERE packages.id = \"$secpack\"";
+		$sqln = "SELECT package, servers.ip, servers.sshp, Packages.id FROM Packages INNER JOIN servers ON Packages.servers = servers.id WHERE Packages.id = \"$secpack\"";
 //		print_r($sqln);
 		$resultu = $conn->query($sqln);
 		while ($row = $resultu->fetch_assoc()) {
@@ -174,7 +174,7 @@ if(isset($_GET['Yes'])){
 				$res = (strripos($output,'100') !== strlen($output)-3);
 				
 
-				$uphist = "insert into packageHist (package, version, servers, servername, upgraded) select packages.package, packages.version, servers.id, servers.servername, \"".date('Y-m-d')."\" from packages inner join servers on packages.servers = servers.id WHERE packages.id IN (".implode(',',$p_ids).")";
+				$uphist = "insert into packageHist (package, version, servers, servername, upgraded) select Packages.package, Packages.version, servers.id, servers.servername, \"".date('Y-m-d')."\" from Packages inner join servers on Packages.servers = servers.id WHERE Packages.id IN (".implode(',',$p_ids).")";
 				$changeu = "UPDATE Packages SET upgrade = 0, security = 0 WHERE id IN (".implode(',',$p_ids).")";
 				if($res){
 				mysqli_query($conn, $changeu)&&mysqli_query($conn, $uphist);

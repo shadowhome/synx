@@ -104,8 +104,10 @@ if ($_REQUEST['populate'] == 'yes') {
 	flush();
 	echo "If the above completed we're going to retrieve some data";
 	exec("ssh sysad@$ip \"echo 'SELECT package, cversion, nversion, md5, upgrade, security FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $packages);
-	$sql="INSERT INTO packages(package,servers,version,nversion, md5, upgrade, security, servername) VALUES ";
+	$sql="INSERT INTO Packages(package,servers,version,nversion, md5, upgrade, security, servername) VALUES ";
 	$sep = '';
+	echo "Addding keys to known hosts";
+	exec("su - www-data -c 'ssh-keyscan -H $ip >> ~/.ssh/known_hosts'");
 	
 	foreach ($packages as $md_s) {
 		list($pack, $cver, $nver, $md5, $upgrade, $sec) = explode("|", $md_s);

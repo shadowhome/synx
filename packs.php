@@ -43,7 +43,7 @@ $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$
 
 	exec("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, date, md5, cversion, rc, ii, changelog FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ", $lines);
 //print_r("ssh sysad@$ip \"echo 'SELECT package , nversion, security, upgrade, date, md5, cversion, rc, ii, changelog FROM Packages;'|sqlite3 /home/sysad/manage/synx.db \" ");
-	$sql="REPLACE INTO packages (package, version, security, upgrade, servers, servername, date, md5, nversion, rc, ii, changelog) VALUES";	
+	$sql="REPLACE INTO Packages (package, version, security, upgrade, servers, servername, date, md5, nversion, rc, ii, changelog) VALUES";	
 	$sep = '';
 	
 	$package = null;
@@ -100,7 +100,7 @@ $sqlnew = "UPDATE servers SET OS = '$OS', version = '$version' , releasever = '$
 	if (mysqli_query($conn, $sqlnew)&&mysqli_query($conn, $sql)&&mysqli_query($conn, $sqlhw)) {
 
 		echo "New record created successfully";
-		header( "Location: Servers.php?id=$id" );
+		//header( "Location: Servers.php?id=$id" );
 	} else {
 		echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 	}

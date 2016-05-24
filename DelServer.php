@@ -50,7 +50,7 @@ if (!$conn) {
 	die("Connection failed: " . mysqli_connect_error());
 }
 $sql="DELETE FROM servers WHERE servers.id=$server"; 
-$sql2="DELETE FROM packages WHERE packages.servers=$server";
+$sql2="DELETE FROM Packages WHERE Packages.servers=$server";
 
 if (mysqli_query($conn, $sql)&&mysqli_query($conn, $sql2)) {
 	echo "New record deleted successfully";

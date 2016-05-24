@@ -64,12 +64,12 @@ echo '<br/> <br/> <br/>';
 
 //echo "<form action='Upgrades.php' method='get'>";
 echo "<form id=\"packages\" action='Upgrades.php' method='get'>";
-$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM packages where upgrade = 1 AND servers = $id";
+$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM Packages where upgrade = 1 AND servers = $id";
 if (isset($_GET['Sec'])) {
-	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM packages where security = 1 AND servers = $id";
+	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM Packages where security = 1 AND servers = $id";
 }
 elseif(isset($_GET['Check'])) {
-	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM packages where upgrade = 1 AND servers = $id";
+	$sql = "SELECT package, id, version, nversion,servername,security,upgrade FROM Packages where upgrade = 1 AND servers = $id";
 }
 $result = $conn->query($sql);
 ?>
@@ -134,7 +134,7 @@ if(isset($_GET['Go'])){
 	$packages = array();
 	echo "<p>Your going to upgrade:</p>";
 	foreach ($secid as $secpack) {
-	$sqln = "SELECT package FROM packages where id = $secpack and servers = $id";
+	$sqln = "SELECT package FROM Packages where id = $secpack and servers = $id";
 	$resultu = $conn->query($sqln);
     	while ($row = $resultu->fetch_assoc()) {
     		echo "Package:" . $row['package']; echo "<br/>";
