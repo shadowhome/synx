@@ -44,7 +44,7 @@ $result = $conn->query($servers);
 			<tbody>
 			<?php
 
-			if (!empty($result) && $result->num_rows > 0) { ?>
+			if ($result && $result->num_rows > 0) { ?>
 				<?php while($row = $result->fetch_assoc()) { ?>
 					<tr>
 						<td><?php echo $row["id"]; ?></td>

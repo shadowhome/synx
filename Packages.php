@@ -74,7 +74,7 @@ $result = $conn->query($sql);
 			</thead>
 			<tbody>
 			<?php
-			if ($result->num_rows > 0) { 
+			if ($result && $result->num_rows > 0) {
 				
 				 while($row = $result->fetch_assoc()) { ?>
 					<tr>
@@ -102,7 +102,7 @@ $result = $conn->query($sql);
 				
 				 } ?>
 			<?php } else {
-					echo "<tr>0 results</tr>";
+					echo '<tr><td colspan="8" class="alert-warning">0 results</td></tr>';
 				}
 			?>
 			</tbody>
